@@ -61,7 +61,7 @@ function transformName(
 app.get('/', async (c) => {
   // Get & set parameter values
   const options: Options = {
-    name: c.req.query('name') || 'World',
+    name: c.req.query('name') || 'John+Doe',
     background: c.req.query('background') || 'DDDDDD',
     color: c.req.query('color') || '222222',
     size: Number(c.req.query('size')) || 64,
