@@ -37,16 +37,22 @@ function emojiDeletion(text: string): string {
 }
 
 // Function to transform name based on specified rules
-function transformName(name: string, uppercase: boolean): string {
+function transformName(
+  name: string,
+  length: number,
+  uppercase: boolean,
+): string {
   if (name.includes('+')) {
     const parts = name.split('+');
     let combinedName =
       parts.length > 2
-        ? parts[0][0] + parts[1][0]
-        : parts.map((part) => part[0]).join('');
+        ? parts[0].slice(0, length) + parts[1].slice(0, length)
+        : parts.map((part) => part.slice(0, length)).join('');
     return uppercase ? combinedName.toUpperCase() : combinedName;
   } else {
-    return uppercase ? name.slice(0, 2).toUpperCase() : name.slice(0, 2);
+    return uppercase
+      ? name.slice(0, length).toUpperCase()
+      : name.slice(0, length);
   }
 }
 
@@ -67,9 +73,14 @@ app.get('/', async (c) => {
     fontSize: Number(c.req.query('font-size')) || 0.5,
   };
 
+  // Initial value if blank
+  options.size = Math.max(16, Math.min(512, options.size));
+  options.length = Math.round(options.length);
+  options.fontSize = Math.max(0.1, Math.min(1, options.fontSize));
+
   // Check if name is empty
   options.name = emojiDeletion(options.name.replace(/ /g, '+'));
-  options.name = transformName(options.name, options.uppercase);
+  options.name = transformName(options.name, options.length, options.uppercase);
 
   // Check if background is a valid hex
   options.background = isHex(options.background)
@@ -80,11 +91,6 @@ app.get('/', async (c) => {
   // Check if color is a valid hex
   options.color = isHex(options.color) ? options.color : '222222';
   options.color = `#${options.color}`;
-
-  // Initial value if blank
-  options.size = Math.max(16, Math.min(512, options.size));
-  options.length = Math.round(options.length);
-  options.fontSize = Math.max(0.1, Math.min(1, options.fontSize));
 
   c.header(
     'Content-Type',
