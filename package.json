@@ -8,7 +8,9 @@
     "format": "prettier --write src/**/*.ts"
   },
   "dependencies": {
-    "hono": "^4.5.1"
+    "@resvg/resvg-wasm": "^2.6.2",
+    "hono": "^4.5.1",
+    "satori": "^0.10.14"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240725.0",

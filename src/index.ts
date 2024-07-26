@@ -1,7 +1,24 @@
 import { Hono } from 'hono';
+import generateImage from './image';
+import { initWasm } from '@resvg/resvg-wasm';
+// @ts-ignore
+import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm';
 
-type Bindings = {
-  [key in keyof CloudflareBindings]: CloudflareBindings[key];
+await initWasm(WASM_RESVG);
+
+type Bindings = {};
+
+export type Options = {
+  name: string;
+  background: string;
+  color: string;
+  size: number;
+  length: number;
+  rounded: boolean;
+  bold: boolean;
+  uppercase: boolean;
+  format: string;
+  fontSize: number;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -33,42 +50,45 @@ function transformName(name: string, uppercase: boolean): string {
   }
 }
 
-app.get('/', (c) => {
+app.get('/', async (c) => {
   // Get & set parameter values
-  let {
-    name,
-    background,
-    color,
-    size,
-    length,
-    rounded,
-    bold,
-    uppercase,
-    format,
-  } = c.req.query();
-  const fontSize = c.req.query('font-size');
-  const isRounded = rounded === 'true';
-  const isBold = bold === 'true';
-  const isUppercase = uppercase === 'true';
-  const isSvg = format === 'svg';
+  const options: Options = {
+    name: c.req.query('name') || 'World',
+    background: c.req.query('background') || 'DDDDDD',
+    color: c.req.query('color') || '222222',
+    size: Number(c.req.query('size')) || 64,
+    length: Number(c.req.query('length')) || 2,
+    rounded: c.req.query('rounded') === 'true',
+    bold: c.req.query('bold') === 'true',
+    uppercase: c.req.query('uppercase') === 'true',
+    format: c.req.query('format') || 'png',
+    fontSize: Number(c.req.query('font-size')) || 0.5,
+  };
 
   // Check if name is empty
-  name = emojiDeletion(name.replace(/ /g, '+')) || 'World';
-  name = transformName(name, isUppercase);
+  options.name = emojiDeletion(options.name.replace(/ /g, '+'));
+  options.name = transformName(options.name, options.uppercase);
 
-  // Check if background is a valid
-  background = isHex(background) ? background : 'DDDDDD';
-  background = `#${background}`;
+  // Check if background is a valid hex
+  options.background = isHex(options.background)
+    ? options.background
+    : 'DDDDDD';
+  options.background = `#${options.background}`;
 
-  // Check if color is a valid
-  color = isHex(color) ? color : '222222';
-  color = `#${color}`;
+  // Check if color is a valid hex
+  options.color = isHex(options.color) ? options.color : '222222';
+  options.color = `#${options.color}`;
 
   // Initial value if blank
-  size = size ?? '64';
-  length = String(Math.round(Number(length) || 1));
+  options.size = Math.max(16, Math.min(512, options.size));
+  options.length = Math.round(options.length);
+  options.fontSize = Math.max(0.1, Math.min(1, options.fontSize));
 
-  return c.text(`Hello, ${name}!`);
+  c.header(
+    'Content-Type',
+    options.format === 'svg' ? 'image/svg+xml' : 'image/png',
+  );
+  return c.body(await generateImage(options));
 });
 
 export default app;
