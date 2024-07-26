@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import generateImage from './image';
 import { initWasm } from '@resvg/resvg-wasm';
 // @ts-ignore
-import WASM_RESVG from './../node_modules/@resvg/resvg-wasm/index_bg.wasm';
+import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm';
 
 await initWasm(WASM_RESVG);
 
