@@ -1,13 +1,13 @@
-import { Hono } from 'hono'
+import { Hono } from 'hono';
 
 type Bindings = {
-  [key in keyof CloudflareBindings]: CloudflareBindings[key]
-}
+  [key in keyof CloudflareBindings]: CloudflareBindings[key];
+};
 
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+  return c.text('Hello Hono!');
+});
 
-export default app
+export default app;
