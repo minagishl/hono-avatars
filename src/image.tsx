@@ -1,5 +1,5 @@
 import satori from 'satori';
-import { Resvg, initWasm } from '@resvg/resvg-wasm';
+import { Resvg } from '@resvg/resvg-wasm';
 import { Options } from './index';
 
 function Component(options: Options) {
