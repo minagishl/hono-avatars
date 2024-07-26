@@ -43,7 +43,7 @@ function transformName(
 ): string {
   if (name.includes('+')) {
     const parts = name.split('+');
-    let combinedName = parts[0].slice(0, 1) + parts[1].slice(0, length);
+    let combinedName = parts[0].slice(0, 1) + parts[1].slice(0, length - 1);
     return uppercase ? combinedName.toUpperCase() : combinedName;
   } else {
     return uppercase
