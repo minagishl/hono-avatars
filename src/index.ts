@@ -7,7 +7,11 @@ type Bindings = {
 const app = new Hono<{ Bindings: Bindings }>();
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!');
+  // Get & set parameter values
+  let { name, background } = c.req.query();
+  background = background || '#000';
+
+  return c.text(`Hello, ${name}!`);
 });
 
 export default app;
