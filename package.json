@@ -1,17 +1,19 @@
 {
-	"name": "hono-avatars",
-	"scripts": {
-		"build": "esbuild --bundle src/index.ts --format=esm --outfile=dist/_worker.js --minify",
-		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
-		"deploy": "wrangler deploy --minify",
-		"dev": "wrangler dev"
-	},
-	"dependencies": {
-		"hono": "^4.5.1"
-	},
-	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20240725.0",
-		"esbuild": "^0.23.0",
-		"wrangler": "^3.57.2"
-	}
+  "name": "hono-avatars",
+  "scripts": {
+    "build": "esbuild --bundle src/index.ts --format=esm --outfile=dist/_worker.js --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "deploy": "wrangler deploy --minify",
+    "dev": "wrangler dev",
+    "format": "prettier --write src/**/*.ts"
+  },
+  "dependencies": {
+    "hono": "^4.5.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240725.0",
+    "esbuild": "^0.23.0",
+    "prettier": "^3.3.3",
+    "wrangler": "^3.57.2"
+  }
 }
