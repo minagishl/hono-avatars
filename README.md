@@ -9,7 +9,7 @@ All requests returns a image stream to be used directly in a `<img/>` tag.
 **Generate a avatar with default settings, for user "John Doe".**
 
 ```
-https://hono-avatars.pages.dev/?name=john-doe
+https://hono-avatars.pages.dev/?name=john+doe
 ```
 
 **Generate a blue avatar**
