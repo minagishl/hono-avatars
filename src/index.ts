@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import generateImage from './image';
 import { initWasm } from '@resvg/resvg-wasm';
 // @ts-ignore
-import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm?url';
+import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm';
 
 await initWasm(WASM_RESVG);
 
@@ -60,7 +60,9 @@ app.get('/', async (c) => {
     length: Number(c.req.query('length')) || 2,
     rounded: c.req.query('rounded') === 'true',
     bold: c.req.query('bold') === 'true',
-    uppercase: c.req.query('uppercase') === 'true',
+    uppercase: c.req.query('uppercase')
+      ? c.req.query('uppercase') === 'true'
+      : true,
     format: c.req.query('format') || 'png',
     fontSize: Number(c.req.query('font-size')) || 0.5,
   };
