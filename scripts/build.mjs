@@ -7,9 +7,7 @@ const options = {
   format: 'esm',
   outfile: 'dist/_worker.js',
   plugins: [wasmLoader()],
-  loader: {
-    '.wasm': 'file',
-  },
+  external: ['wbg'],
 };
 
 build(options).catch((err) => {
