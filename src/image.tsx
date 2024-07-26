@@ -10,7 +10,7 @@ function Component(options: Options) {
         width: '100%',
         position: 'relative',
         backgroundColor: options.background,
-        fontSize: `${(options.fontSize * options.size) / 15}rem`,
+        fontSize: `${(options.fontSize * options.size) / 20}rem`,
         fontWeight: options.bold ? 'bold' : 'normal',
         borderRadius: options.rounded ? '50%' : '0',
         whiteSpace: 'nowrap',
