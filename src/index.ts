@@ -35,7 +35,7 @@ function transformName(name: string): string {
 
 app.get('/', (c) => {
   // Get & set parameter values
-  let { name, background } = c.req.query();
+  let { name, background, color } = c.req.query();
 
   // Check if name is empty
   name = emojiDeletion(name.replace(/ /g, '+')) || 'World';
@@ -44,6 +44,10 @@ app.get('/', (c) => {
   // Check if background is a valid
   background = isHex(background) ? background : 'DDDDDD';
   background = `#${background}`;
+
+  // Check if color is a valid
+  color = isHex(color) ? color : '222222';
+  color = `#${color}`;
 
   return c.text(`Hello, ${name}!`);
 });
