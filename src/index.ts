@@ -84,6 +84,11 @@ app.get('/', async (c) => {
     fontSize: Number(c.req.query('font-size')) || 0.5,
   };
 
+  if (options.name.length > 40) {
+    c.status(400); // Bad Request
+    return c.json({ error: 'Name is too long' });
+  }
+
   // Initial value if blank
   options.size = Math.max(16, Math.min(512, options.size));
   options.length = Math.round(options.length);
