@@ -1,7 +1,7 @@
 {
   "name": "hono-avatars",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "wrangler deploy --dry-run --minify --outdir=dist && node scripts/build.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "deploy": "wrangler deploy --minify",
     "dev": "wrangler dev",

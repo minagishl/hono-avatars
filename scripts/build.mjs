@@ -1,16 +1,12 @@
-import { build } from 'esbuild';
-import { wasmLoader } from 'esbuild-plugin-wasm';
+// I've forced myself to implement it and look forward to the future.
+// If you have a good idea, please create a pull request!
 
-const options = {
-  entryPoints: ['src/index.ts'],
-  bundle: true,
-  format: 'esm',
-  outfile: 'dist/_worker.js',
-  plugins: [wasmLoader()],
-  external: ['wbg'],
-};
+import fs from 'node:fs';
+import path from 'node:path';
 
-build(options).catch((err) => {
-  process.stderr.write(err.stderr);
-  process.exit(1);
-});
+// Rename index.js to _worker.js
+fs.renameSync(path.resolve('dist/index.js'), path.resolve('dist/_worker.js'));
+
+// Delete unnecessary files
+fs.unlinkSync(path.resolve('dist/index.js.map'));
+fs.unlinkSync(path.resolve('dist/README.md'));
