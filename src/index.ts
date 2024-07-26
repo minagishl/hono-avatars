@@ -25,7 +25,6 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Function to check if a string is a valid hex string
 function isHex(text: string): boolean {
-  // A hex string should match the pattern: ^[0-9A-Fa-f]+$
   const hexRegex = /^[0-9A-Fa-f]+$/;
   return hexRegex.test(text);
 }
