@@ -1,14 +1,14 @@
 {
   "name": "hono-avatars",
   "scripts": {
-    "build": "wrangler deploy --dry-run --minify --outdir=dist && node scripts/build.mjs",
+    "build": "wrangler deploy src/index.ts --dry-run --minify --outdir=dist && node scripts/build.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "deploy": "wrangler deploy --minify",
     "dev": "wrangler dev",
     "format": "prettier --write src/**/*.ts"
   },
   "dependencies": {
-    "@resvg/resvg-wasm": "^2.6.2",
+    "@resvg/resvg-wasm": "2.4.1",
     "hono": "^4.5.1",
     "satori": "^0.10.14"
   },
