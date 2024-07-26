@@ -65,12 +65,21 @@ app.get('/', async (c) => {
     background: c.req.query('background') || 'DDDDDD',
     color: c.req.query('color') || '222222',
     size: Number(c.req.query('size')) || 64,
-    length: Number(c.req.query('length')) || 2,
+
+    // If length is set to full, use the full name
+    length:
+      c.req.query('length') === 'full'
+        ? Number(c.req.query('name')?.length)
+        : Number(c.req.query('length')) || 2,
+
     rounded: c.req.query('rounded') === 'true',
     bold: c.req.query('bold') === 'true',
+
+    // If uppercase is not set, default to true
     uppercase: c.req.query('uppercase')
       ? c.req.query('uppercase') === 'true'
       : true,
+
     format: c.req.query('format') || 'png',
     fontSize: Number(c.req.query('font-size')) || 0.5,
   };
