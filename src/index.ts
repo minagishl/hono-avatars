@@ -6,6 +6,13 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
+// Function to check if a string is a valid hex string
+function isHex(text: string): boolean {
+  // A hex string should match the pattern: ^[0-9A-Fa-f]+$
+  const hexRegex = /^[0-9A-Fa-f]+$/;
+  return hexRegex.test(text);
+}
+
 // Function to delete emojis from text
 function emojiDeletion(text: string): string {
   const regex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
@@ -29,9 +36,14 @@ function transformName(name: string): string {
 app.get('/', (c) => {
   // Get & set parameter values
   let { name, background } = c.req.query();
+
+  // Check if name is empty
   name = emojiDeletion(name.replace(/ /g, '+')) || 'World';
   name = transformName(name);
-  background = background || '#000';
+
+  // Check if background is a valid
+  background = isHex(background) ? background : 'DDDDDD';
+  background = `#${background}`;
 
   return c.text(`Hello, ${name}!`);
 });
