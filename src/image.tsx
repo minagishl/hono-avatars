@@ -8,19 +8,24 @@ function Component(options: Options) {
       style={{
         height: '100%',
         width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'relative',
         backgroundColor: options.background,
-        fontSize: options.fontSize * 60,
+        fontSize: `${(options.fontSize * options.size) / 15}rem`,
         fontWeight: options.bold ? 'bold' : 'normal',
         borderRadius: options.rounded ? '50%' : '0',
+        whiteSpace: 'nowrap',
+        display: 'flex',
+        paddingBottom: '0.15em',
       }}
     >
       <div
         style={{
           color: options.color,
           fontSize: 'inherit',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
         }}
       >
         {options.name}
