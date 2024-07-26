@@ -20,26 +20,41 @@ function emojiDeletion(text: string): string {
 }
 
 // Function to transform name based on specified rules
-function transformName(name: string): string {
+function transformName(name: string, uppercase: boolean): string {
   if (name.includes('+')) {
     const parts = name.split('+');
-    if (parts.length > 2) {
-      return parts[0][0] + parts[1][0];
-    } else {
-      return parts.map((part) => part[0]).join('');
-    }
+    let combinedName =
+      parts.length > 2
+        ? parts[0][0] + parts[1][0]
+        : parts.map((part) => part[0]).join('');
+    return uppercase ? combinedName.toUpperCase() : combinedName;
   } else {
-    return name.slice(0, 2).toUpperCase();
+    return uppercase ? name.slice(0, 2).toUpperCase() : name.slice(0, 2);
   }
 }
 
 app.get('/', (c) => {
   // Get & set parameter values
-  let { name, background, color } = c.req.query();
+  let {
+    name,
+    background,
+    color,
+    size,
+    length,
+    rounded,
+    bold,
+    uppercase,
+    format,
+  } = c.req.query();
+  const fontSize = c.req.query('font-size');
+  const isRounded = rounded === 'true';
+  const isBold = bold === 'true';
+  const isUppercase = uppercase === 'true';
+  const isSvg = format === 'svg';
 
   // Check if name is empty
   name = emojiDeletion(name.replace(/ /g, '+')) || 'World';
-  name = transformName(name);
+  name = transformName(name, isUppercase);
 
   // Check if background is a valid
   background = isHex(background) ? background : 'DDDDDD';
@@ -48,6 +63,10 @@ app.get('/', (c) => {
   // Check if color is a valid
   color = isHex(color) ? color : '222222';
   color = `#${color}`;
+
+  // Initial value if blank
+  size = size ?? '64';
+  length = String(Math.round(Number(length) || 1));
 
   return c.text(`Hello, ${name}!`);
 });
