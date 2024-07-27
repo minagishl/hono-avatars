@@ -117,8 +117,6 @@ app.get('/', async (c) => {
     options.border = `#${options.border}`;
   }
 
-  console.log(options);
-
   c.header(
     'Content-Type',
     options.format === 'svg' ? 'image/svg+xml' : 'image/png',
