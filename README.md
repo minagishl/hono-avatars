@@ -36,3 +36,4 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - `shadow` - The text shadow of the text. Default is `false`.
 - `border` - The border of the avatar. Default is `false`.
 - `opacity` - The opacity of the avatar. Default is `1`.
+- `reverse` - The reverse of the text. Default is `false`.

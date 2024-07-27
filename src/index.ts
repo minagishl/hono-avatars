@@ -23,6 +23,7 @@ export type Options = {
   shadow: boolean;
   border: string | null;
   opacity: number;
+  reverse: boolean;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -44,11 +45,14 @@ function transformName(
   name: string,
   length: number,
   uppercase: boolean,
+  reverse: boolean,
 ): string {
   if (name.includes('+')) {
     const parts = name.split('+');
     const newLength = length === 1 ? 0 : length - 1;
-    let combinedName = parts[0].slice(0, 1) + parts[1].slice(0, newLength);
+    let combinedName =
+      parts[reverse ? 1 : 0].slice(0, reverse ? newLength : 1) +
+      parts[reverse ? 0 : 1].slice(0, reverse ? 1 : newLength);
     return uppercase ? combinedName.toUpperCase() : combinedName;
   } else {
     return uppercase
@@ -85,6 +89,7 @@ app.get('/', async (c) => {
     shadow: c.req.query('shadow') === 'true',
     border: c.req.query('border') || null,
     opacity: Number(c.req.query('opacity')) || 1,
+    reverse: c.req.query('reverse') === 'true',
   };
 
   if (options.name.length > 40) {
@@ -99,7 +104,12 @@ app.get('/', async (c) => {
 
   // Check if name is empty
   options.name = emojiDeletion(options.name.replace(/ /g, '+'));
-  options.name = transformName(options.name, options.length, options.uppercase);
+  options.name = transformName(
+    options.name,
+    options.length,
+    options.uppercase,
+    options.reverse,
+  );
 
   // Check if background is a valid hex
   options.background = isHex(options.background)
