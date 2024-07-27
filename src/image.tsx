@@ -17,6 +17,7 @@ function Component(options: Options) {
         display: 'flex',
         paddingBottom: '0.15em',
         border: options.border ? `0.1em solid ${options.border}` : 'none',
+        opacity: options.opacity,
       }}
     >
       <div

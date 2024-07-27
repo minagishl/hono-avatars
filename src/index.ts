@@ -21,6 +21,7 @@ export type Options = {
   fontSize: number;
   shadow: boolean;
   border: string | null;
+  opacity: number;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -81,6 +82,7 @@ app.get('/', async (c) => {
     fontSize: Number(c.req.query('font-size')) || 0.5,
     shadow: c.req.query('shadow') === 'true',
     border: c.req.query('border') || null,
+    opacity: Number(c.req.query('opacity')) || 1,
   };
 
   if (options.name.length > 40) {
@@ -112,6 +114,8 @@ app.get('/', async (c) => {
     options.border = isHex(options.border) ? options.border : null;
     options.border = `#${options.border}`;
   }
+
+  console.log(options);
 
   c.header(
     'Content-Type',
