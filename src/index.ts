@@ -143,8 +143,6 @@ const getValidatedOptions = (c: any): Options => {
 app.get('/', async (c) => {
   const options = getValidatedOptions(c);
 
-  console.log(options);
-
   if (options.fontFamily === 'mono' && includeJA(options.name)) {
     c.status(400);
     return c.json({ error: 'Japanese characters are not supported with mono' });
