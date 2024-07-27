@@ -6,6 +6,23 @@ import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm';
 
 await initWasm(WASM_RESVG);
 
+// Define constants for default values
+const DEFAULTS = {
+  NAME: 'John+Doe',
+  BACKGROUND: 'DDDDDD',
+  COLOR: '222222',
+  SIZE: 64,
+  LENGTH: 2,
+  FORMAT: 'png',
+  FONT_SIZE: 0.5,
+  FONT_FAMILY: 'sans',
+  NAME_LENGTH: 40,
+  MIN_SIZE: 16,
+  MAX_SIZE: 512,
+  MIN_FONT_SIZE: 0.1,
+  MAX_FONT_SIZE: 1,
+};
+
 type Bindings = {};
 
 export type Options = {
@@ -29,29 +46,27 @@ export type Options = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-// Function to check if a string is a valid hex string
+// Helper function to check if a string is a valid hex string
 function isHex(text: string): boolean {
-  const hexRegex = /^[0-9A-Fa-f]+$/;
-  return hexRegex.test(text);
+  return /^[0-9A-Fa-f]+$/.test(text);
 }
 
-// Function to delete emojis from text
-function emojiDeletion(text: string): string {
-  const regex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-  return text.replace(regex, '');
+// Helper function to remove emojis from text
+function removeEmojis(text: string): string {
+  return text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
 }
 
-// Function to transform name based on specified rules
-function transformName(
+// Helper function to transform the name based on specified rules
+const transformName = (
   name: string,
   length: number,
   uppercase: boolean,
   reverse: boolean,
-): string {
+): string => {
   if (name.includes('+')) {
     const parts = name.split('+');
     const newLength = length === 1 ? 0 : length - 1;
-    let combinedName =
+    const combinedName =
       parts[reverse ? 1 : 0].slice(0, reverse ? newLength : 1) +
       parts[reverse ? 0 : 1].slice(0, reverse ? 1 : newLength);
     return uppercase ? combinedName.toUpperCase() : combinedName;
@@ -60,73 +75,65 @@ function transformName(
       ? name.slice(0, length).toUpperCase()
       : name.slice(0, length);
   }
-}
+};
 
-app.get('/', async (c) => {
-  // Get & set parameter values
-  const options: Options = {
-    name: c.req.query('name') || 'John+Doe',
-    background: c.req.query('background') || 'DDDDDD',
-    color: c.req.query('color') || '222222',
-    size: Number(c.req.query('size')) || 64,
+// Helper function to validate and parse query parameters
+const getValidatedOptions = (c: any): Options => {
+  const name = c.req.query('name') || DEFAULTS.NAME;
+  const background = c.req.query('background') || DEFAULTS.BACKGROUND;
+  const color = c.req.query('color') || DEFAULTS.COLOR;
+  const size = Number(c.req.query('size')) || DEFAULTS.SIZE;
+  const length =
+    c.req.query('length') === 'full'
+      ? name.length
+      : Number(c.req.query('length')) || DEFAULTS.LENGTH;
+  const rounded = c.req.query('rounded') === 'true';
+  const bold = c.req.query('bold') === 'true';
+  const uppercase = c.req.query('uppercase') !== 'false';
+  const format = c.req.query('format') || DEFAULTS.FORMAT;
+  const fontSize = Number(c.req.query('font-size')) || DEFAULTS.FONT_SIZE;
+  const fontFamily = c.req.query('font-family') || DEFAULTS.FONT_FAMILY;
+  const shadow = c.req.query('shadow') === 'true';
+  const border = c.req.query('border') || null;
+  const borderStyle = c.req.query('border-style') || 'solid';
+  const opacity = Number(c.req.query('opacity')) || 1;
+  const reverse = c.req.query('reverse') === 'true';
 
-    // If length is set to full, use the full name
-    length:
-      c.req.query('length') === 'full'
-        ? Number(c.req.query('name')?.length)
-        : Number(c.req.query('length')) || 2,
-
-    rounded: c.req.query('rounded') === 'true',
-    bold: c.req.query('bold') === 'true',
-
-    // If uppercase is not set, default to true
-    uppercase: c.req.query('uppercase')
-      ? c.req.query('uppercase') === 'true'
-      : true,
-
-    format: c.req.query('format') || 'png',
-    fontSize: Number(c.req.query('font-size')) || 0.5,
-    fontFamily: c.req.query('font-family') || 'sans',
-    shadow: c.req.query('shadow') === 'true',
-    border: c.req.query('border') || null,
-    borderStyle: c.req.query('border-style') || 'solid',
-    opacity: Number(c.req.query('opacity')) || 1,
-    reverse: c.req.query('reverse') === 'true',
-  };
-
-  if (options.name.length > 40) {
-    c.status(400); // Bad Request
-    return c.json({ error: 'Name is too long' });
-  }
-
-  // Initial value if blank
-  options.size = Math.max(16, Math.min(512, options.size));
-  options.length = Math.round(options.length);
-  options.fontSize = Math.max(0.1, Math.min(1, options.fontSize));
-
-  // Check if name is empty
-  options.name = emojiDeletion(options.name.replace(/ /g, '+'));
-  options.name = transformName(
-    options.name,
-    options.length,
-    options.uppercase,
-    options.reverse,
+  const spaceDeleteName = removeEmojis(name.replace(/ /g, '+'));
+  const newBackground = isHex(background)
+    ? `#${background}`
+    : `#${DEFAULTS.BACKGROUND}`;
+  const newFontSize = Math.max(
+    DEFAULTS.MIN_FONT_SIZE,
+    Math.min(DEFAULTS.MAX_FONT_SIZE, fontSize),
   );
 
-  // Check if background is a valid hex
-  options.background = isHex(options.background)
-    ? options.background
-    : 'DDDDDD';
-  options.background = `#${options.background}`;
+  return {
+    name: transformName(spaceDeleteName, length, uppercase, reverse),
+    background: newBackground,
+    color: isHex(color) ? `#${color}` : `#${DEFAULTS.COLOR}`,
+    size: Math.max(DEFAULTS.MIN_SIZE, Math.min(DEFAULTS.MAX_SIZE, size)),
+    length: Math.round(length),
+    rounded,
+    bold,
+    uppercase,
+    format,
+    fontSize: newFontSize,
+    fontFamily,
+    shadow,
+    border: border && isHex(border) ? `#${border}` : null,
+    borderStyle,
+    opacity,
+    reverse,
+  };
+};
 
-  // Check if color is a valid hex
-  options.color = isHex(options.color) ? options.color : '222222';
-  options.color = `#${options.color}`;
+app.get('/', async (c) => {
+  const options = getValidatedOptions(c);
 
-  // Check if border is a valid hex
-  if (options.border !== null) {
-    options.border = isHex(options.border) ? options.border : null;
-    options.border = `#${options.border}`;
+  if (options.name.length > DEFAULTS.NAME_LENGTH) {
+    c.status(400);
+    return c.json({ error: 'Name is too long' });
   }
 
   c.header(
