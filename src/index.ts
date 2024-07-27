@@ -58,6 +58,13 @@ function removeEmojis(text: string): string {
   return text.replace(emojiRegex, '');
 }
 
+// Helper function to check if text includes Japanese characters
+function includeJA(text: string): boolean {
+  return text.match(/^[\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]+$/)
+    ? true
+    : false;
+}
+
 // Helper function to transform the name based on specified rules
 function transformName(
   name: string,
@@ -132,6 +139,11 @@ const getValidatedOptions = (c: any): Options => {
 
 app.get('/', async (c) => {
   const options = getValidatedOptions(c);
+
+  if (options.fontFamily === 'mono' && includeJA(options.name)) {
+    c.status(400);
+    return c.json({ error: 'Japanese characters are not supported with mono' });
+  }
 
   if (options.name.length > DEFAULTS.NAME_LENGTH) {
     c.status(400);
