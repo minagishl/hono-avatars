@@ -6,17 +6,21 @@ This repository contains code that uses the REST API to generate avatars and ret
 
 All requests return an image stream to be used directly in an `<img/>` tag.
 
-Generate an avatar with default settings, for user "John Doe":
+**Generate an avatar with default settings, for user "John Doe":**
 
-    https://hono-avatars.pages.dev/?name=john+doe
+```
+https://hono-avatars.pages.dev/?name=john+doe
+```
 
-Generate a blue avatar:
+**Generate a blue avatar:**
 
-    https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
+```
+https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
+```
 
 ## Parameters
 
-> Note: This project is compatible with `ui-avatars.com`, some parameters are not supported but should work the same.
+> **Note:** This project is compatible with `ui-avatars.com`, some parameters are not supported but should work the same.
 
 - `name` - The name of the user to generate the avatar.
 - `background` - The background color of the avatar. Default is `#DDDDDD`.
