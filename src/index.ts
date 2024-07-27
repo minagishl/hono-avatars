@@ -42,6 +42,7 @@ export type Options = {
   borderStyle: string;
   opacity: number;
   reverse: boolean;
+  oblique: boolean;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -107,6 +108,7 @@ const getValidatedOptions = (c: any): Options => {
   const borderStyle = c.req.query('border-style') || 'solid';
   const opacity = Number(c.req.query('opacity')) || 1;
   const reverse = c.req.query('reverse') === 'true';
+  const oblique = c.req.query('oblique') === 'true';
 
   const spaceDeleteName = removeEmojis(name.replace(/ /g, '+'));
   const newBackground = isHex(background)
@@ -134,11 +136,14 @@ const getValidatedOptions = (c: any): Options => {
     borderStyle,
     opacity,
     reverse,
+    oblique,
   };
 };
 
 app.get('/', async (c) => {
   const options = getValidatedOptions(c);
+
+  console.log(options);
 
   if (options.fontFamily === 'mono' && includeJA(options.name)) {
     c.status(400);

@@ -21,6 +21,7 @@ function Component(options: Options) {
   };
 
   const textStyle = {
+    display: 'flex',
     color: options.color,
     fontSize: 'inherit',
     position: 'absolute',
@@ -31,9 +32,15 @@ function Component(options: Options) {
     fontFamily: options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'inherit',
   };
 
+  const textInnerStyle = {
+    ...(options.oblique && { transform: 'skewX(-10deg)' }),
+  };
+
   return (
     <div style={containerStyle}>
-      <div style={textStyle}>{options.name}</div>
+      <div style={textStyle}>
+        <span style={textInnerStyle}>{options.name}</span>
+      </div>
     </div>
   );
 }
