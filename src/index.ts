@@ -19,6 +19,7 @@ export type Options = {
   uppercase: boolean;
   format: string;
   fontSize: number;
+  shadow: boolean;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -77,6 +78,7 @@ app.get('/', async (c) => {
 
     format: c.req.query('format') || 'png',
     fontSize: Number(c.req.query('font-size')) || 0.5,
+    shadow: c.req.query('shadow') === 'true',
   };
 
   if (options.name.length > 40) {

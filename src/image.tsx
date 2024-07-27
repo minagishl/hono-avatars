@@ -26,6 +26,7 @@ function Component(options: Options) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
+          textShadow: options.shadow ? '0 0 0.1em rgba(0, 0, 0, 0.5)' : 'none',
         }}
       >
         {options.name}
