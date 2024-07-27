@@ -152,4 +152,4 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 
 ## License
 
-MIT license
+`hono-avatars` project is licensed under the [MIT License](LICENSE).
