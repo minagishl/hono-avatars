@@ -18,17 +18,17 @@ Generate a blue avatar:
 
 > Note: This project is compatible with `ui-avatars.com`, some parameters are not supported but should work the same.
 
-  * `name` - The name of the user to generate the avatar. Max 40 characters.
+  * `name` - The name of the user to generate the avatar.
   * `background` - The background color of the avatar. Default is `#DDDDDD`.
   * `color` - The text color of the avatar. Default is `#222222`.
-  * `size` - The size of the avatar. Default is `64`. Min is `16`, max is `512`.
-  * `font-size` - The font size of the text. Default is `0.5`. Min is `0.1`, max is `1`.
-  * `length` - The length of the text. Default is `2`. Can be a number or `full`.
+  * `size` - The size of the avatar. Default is `64`.
+  * `font-size` - The font size of the text. Default is `0.5`.
+  * `length` - The length of the text. Default is `2`.
   * `rounded` - The border radius of the avatar. Default is `false`.
   * `bold` - The font weight of the text. Default is `false`.
   * `uppercase` - The text transform of the text. Default is `true`.
-  * `format` - The format of the image. Default is `png`. Can be `png` or `svg`.
-  * `font-family` - The font family of the text. Default is `sans`. Can be `mono`, `sans`, or `serif`. `mono` is English only.
+  * `format` - The format of the image. Default is `png`.
+  * `font-family` - The font family of the text. Default is `sans`.
   * `shadow` - The text shadow of the text. Default is `false`.
   * `border` - The border of the avatar. Default is `false`.
   * `opacity` - The opacity of the avatar. Default is `1`.
