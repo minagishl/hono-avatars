@@ -28,6 +28,7 @@ function Component(options: Options) {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     textShadow: options.shadow ? '0 0 0.1em rgba(0, 0, 0, 0.5)' : 'none',
+    fontFamily: options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'inherit',
   };
 
   return (
@@ -45,8 +46,7 @@ async function fetchFont(text: string, weight: number, fontFamily: string) {
       url.searchParams.append('family', `Noto Serif JP:wght@${weight}`);
       break;
     case 'mono':
-      url.searchParams.append('family', `Roboto Mono:wght@${weight}`);
-      url.searchParams.append('family', `Noto Sans JP:wght@${weight}`);
+      url.searchParams.append('family', `Noto Sans Mono:wght@${weight}`);
       break;
     default:
       url.searchParams.append('family', `Noto Sans JP:wght@${weight}`);
@@ -95,10 +95,13 @@ export default async function generateImage(
     options.fontFamily,
   );
 
+  const fontName =
+    options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'Noto Sans JP';
+
   const svg = await satori(<Component {...options} />, {
     width: options.size,
     height: options.size,
-    fonts: [{ data: font, name: 'Noto Sans JP' }],
+    fonts: [{ data: font, name: fontName }],
   });
 
   if (options.format === 'svg') {
