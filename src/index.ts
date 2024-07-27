@@ -48,21 +48,23 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Helper function to check if a string is a valid hex string
 function isHex(text: string): boolean {
-  return /^[0-9A-Fa-f]+$/.test(text);
+  const hexRegex = /^[0-9A-Fa-f]+$/;
+  return hexRegex.test(text);
 }
 
 // Helper function to remove emojis from text
 function removeEmojis(text: string): string {
-  return text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
+  const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+  return text.replace(emojiRegex, '');
 }
 
 // Helper function to transform the name based on specified rules
-const transformName = (
+function transformName(
   name: string,
   length: number,
   uppercase: boolean,
   reverse: boolean,
-): string => {
+): string {
   if (name.includes('+')) {
     const parts = name.split('+');
     const newLength = length === 1 ? 0 : length - 1;
@@ -75,7 +77,7 @@ const transformName = (
       ? name.slice(0, length).toUpperCase()
       : name.slice(0, length);
   }
-};
+}
 
 // Helper function to validate and parse query parameters
 const getValidatedOptions = (c: any): Options => {
