@@ -19,6 +19,7 @@ export type Options = {
   uppercase: boolean;
   format: string;
   fontSize: number;
+  fontFamily: string;
   shadow: boolean;
   border: string | null;
   opacity: number;
@@ -80,6 +81,7 @@ app.get('/', async (c) => {
 
     format: c.req.query('format') || 'png',
     fontSize: Number(c.req.query('font-size')) || 0.5,
+    fontFamily: c.req.query('font-family') || 'sans',
     shadow: c.req.query('shadow') === 'true',
     border: c.req.query('border') || null,
     opacity: Number(c.req.query('opacity')) || 1,

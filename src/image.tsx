@@ -37,9 +37,22 @@ function Component(options: Options) {
   );
 }
 
-async function fetchFont(text: string, weight: number) {
+async function fetchFont(text: string, weight: number, fontFamily: string) {
   const url = new URL('https://fonts.googleapis.com/css2');
-  url.searchParams.append('family', `Noto Sans JP:wght@${weight}`);
+
+  switch (fontFamily) {
+    case 'serif':
+      url.searchParams.append('family', `Noto Serif JP:wght@${weight}`);
+      break;
+    case 'mono':
+      url.searchParams.append('family', `Roboto Mono:wght@${weight}`);
+      url.searchParams.append('family', `Noto Sans JP:wght@${weight}`);
+      break;
+    default:
+      url.searchParams.append('family', `Noto Sans JP:wght@${weight}`);
+      break;
+  }
+
   url.searchParams.append('text', text);
 
   const response = await fetch(url, {
@@ -77,7 +90,12 @@ export default async function generateImage(
   options: Options,
 ): Promise<Uint8Array | string> {
   if (options.format === 'svg') {
-    const font = await fetchFont(options.name, options.bold ? 700 : 400);
+    const font = await fetchFont(
+      options.name,
+      options.bold ? 700 : 400,
+      options.fontFamily,
+    );
+
     const svg = await satori(<Component {...options} />, {
       width: options.size,
       height: options.size,
@@ -86,7 +104,12 @@ export default async function generateImage(
 
     return svg;
   } else {
-    const font = await fetchFont(options.name, options.bold ? 700 : 400);
+    const font = await fetchFont(
+      options.name,
+      options.bold ? 700 : 400,
+      options.fontFamily,
+    );
+
     const svg = await satori(<Component {...options} />, {
       width: options.size,
       height: options.size,
