@@ -35,5 +35,6 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - `font-family` - The font family of the text. Default is `sans`.
 - `shadow` - The text shadow of the text. Default is `false`.
 - `border` - The border of the avatar. Default is `false`.
+- `border-style` - The border style of the avatar. Default is `solid`.
 - `opacity` - The opacity of the avatar. Default is `1`.
 - `reverse` - The reverse of the text. Default is `false`.

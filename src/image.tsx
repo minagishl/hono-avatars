@@ -3,6 +3,8 @@ import { Resvg } from '@resvg/resvg-wasm';
 import { Options } from './index';
 
 function Component(options: Options) {
+  const borderStyle = options.borderStyle === 'dashed' ? 'dashed' : 'solid';
+
   return (
     <div
       style={{
@@ -16,7 +18,9 @@ function Component(options: Options) {
         whiteSpace: 'nowrap',
         display: 'flex',
         paddingBottom: '0.15em',
-        border: options.border ? `0.1em solid ${options.border}` : 'none',
+        border: options.border
+          ? `0.1em ${borderStyle} ${options.border}`
+          : 'none',
         opacity: options.opacity,
       }}
     >

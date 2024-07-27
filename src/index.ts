@@ -22,6 +22,7 @@ export type Options = {
   fontFamily: string;
   shadow: boolean;
   border: string | null;
+  borderStyle: string;
   opacity: number;
   reverse: boolean;
 };
@@ -88,6 +89,7 @@ app.get('/', async (c) => {
     fontFamily: c.req.query('font-family') || 'sans',
     shadow: c.req.query('shadow') === 'true',
     border: c.req.query('border') || null,
+    borderStyle: c.req.query('border-style') || 'solid',
     opacity: Number(c.req.query('opacity')) || 1,
     reverse: c.req.query('reverse') === 'true',
   };
