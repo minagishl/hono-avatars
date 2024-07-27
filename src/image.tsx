@@ -16,6 +16,7 @@ function Component(options: Options) {
         whiteSpace: 'nowrap',
         display: 'flex',
         paddingBottom: '0.15em',
+        border: options.border ? `0.1em solid ${options.border}` : 'none',
       }}
     >
       <div

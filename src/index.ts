@@ -20,6 +20,7 @@ export type Options = {
   format: string;
   fontSize: number;
   shadow: boolean;
+  border: string | null;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -79,6 +80,7 @@ app.get('/', async (c) => {
     format: c.req.query('format') || 'png',
     fontSize: Number(c.req.query('font-size')) || 0.5,
     shadow: c.req.query('shadow') === 'true',
+    border: c.req.query('border') || null,
   };
 
   if (options.name.length > 40) {
@@ -104,6 +106,12 @@ app.get('/', async (c) => {
   // Check if color is a valid hex
   options.color = isHex(options.color) ? options.color : '222222';
   options.color = `#${options.color}`;
+
+  // Check if border is a valid hex
+  if (options.border !== null) {
+    options.border = isHex(options.border) ? options.border : null;
+    options.border = `#${options.border}`;
+  }
 
   c.header(
     'Content-Type',
