@@ -26,6 +26,7 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - `background` - The background color of the avatar. Default is `#DDDDDD`.
 - `color` - The text color of the avatar. Default is `#222222`.
 - `size` - The size of the avatar. Default is `64`.
+- `blur` - The blur of the avatar. Default is `0`.
 - `font-size` - The font size of the text. Default is `0.5`.
 - `font-family` - The font family of the text. Default is `sans`.
 - `length` - The length of the text. Default is `2`.
@@ -74,6 +75,13 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Default**: `64`
 - **Example**: `size=128`
 - **Values**: Any integer between `16` and `512`
+
+### blur
+
+- **Description**: The blur of the avatar.
+- **Default**: `0`
+- **Example**: `blur=1`
+- **Values**: Any integer between `0` and `1`
 
 ### font-size
 

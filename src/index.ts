@@ -12,6 +12,7 @@ const DEFAULTS = {
   BACKGROUND: 'DDDDDD',
   COLOR: '222222',
   SIZE: 64,
+  BLUR: 0,
   LENGTH: 2,
   FORMAT: 'png',
   ROTATE: 0,
@@ -21,6 +22,8 @@ const DEFAULTS = {
   BORDER_WIDTH: 0.5,
   MIN_SIZE: 16,
   MAX_SIZE: 512,
+  MIN_BLUR: 0,
+  MAX_BLUR: 1,
   MIN_ROTATE: -360,
   MAX_ROTATE: 360,
   MIN_FONT_SIZE: 0.1,
@@ -36,6 +39,7 @@ export type Options = {
   background: string;
   color: string;
   size: number;
+  blur: number;
   length: number;
   rounded: boolean;
   bold: boolean;
@@ -101,6 +105,7 @@ const getValidatedOptions = (c: any): Options => {
   const background = c.req.query('background') || DEFAULTS.BACKGROUND;
   const color = c.req.query('color') || DEFAULTS.COLOR;
   const size = Number(c.req.query('size')) || DEFAULTS.SIZE;
+  const blur = Number(c.req.query('blur')) || DEFAULTS.BLUR;
   const length =
     c.req.query('length') === 'full'
       ? name.length
@@ -149,6 +154,7 @@ const getValidatedOptions = (c: any): Options => {
     background: newBackground,
     color: isHex(color) ? `#${color}` : `#${DEFAULTS.COLOR}`,
     size: Math.max(DEFAULTS.MIN_SIZE, Math.min(DEFAULTS.MAX_SIZE, size)),
+    blur: Math.max(DEFAULTS.MIN_BLUR, Math.min(DEFAULTS.MAX_BLUR, blur)),
     length: Math.round(length),
     rounded,
     bold,

@@ -31,6 +31,7 @@ function Component(options: Options) {
     transform: `translate(-50%, -50%) rotate(${options.rotate}deg)`,
     textShadow: options.shadow ? '0 0 0.1em rgba(0, 0, 0, 0.5)' : 'none',
     fontFamily: options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'inherit',
+    filter: options.blur ? `blur(${options.blur / 10}em)` : 'none',
   };
 
   const textInnerStyle = {
