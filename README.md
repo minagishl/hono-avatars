@@ -27,15 +27,18 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - `color` - The text color of the avatar. Default is `#222222`.
 - `size` - The size of the avatar. Default is `64`.
 - `font-size` - The font size of the text. Default is `0.5`.
+- `font-family` - The font family of the text. Default is `sans`.
 - `length` - The length of the text. Default is `2`.
 - `rounded` - The border radius of the avatar. Default is `false`.
 - `bold` - The font weight of the text. Default is `false`.
 - `uppercase` - The text transform of the text. Default is `true`.
 - `format` - The format of the image. Default is `png`.
-- `font-family` - The font family of the text. Default is `sans`.
 - `shadow` - The text shadow of the text. Default is `false`.
 - `border` - The border of the avatar. Default is `false`.
+- `border-style` - The border style of the avatar. Default is `solid`.
+- `border-width` - The border width of the avatar. Default is `0.5`.
 - `opacity` - The opacity of the avatar. Default is `1`.
+- `reverse` - The reverse of the text. Default is `false`.
 - `oblique` - The font style of the text. Default is `false`.
 
 ## Detailed Parameters Usage
@@ -78,6 +81,13 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Example**: `font-size=0.7`
 - **Values**: Any decimal between `0.1` and `1`
 
+### font-family
+
+- **Description**: The font family of the text.
+- **Default**: `sans`
+- **Example**: `font-family=serif`
+- **Values**: `mono`, `sans`, `serif` (`mono` is English only)
+
 ### length
 
 - **Description**: The length of the text.
@@ -113,13 +123,6 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Example**: `format=svg`
 - **Values**: `png`, `svg`
 
-### font-family
-
-- **Description**: The font family of the text.
-- **Default**: `sans`
-- **Example**: `font-family=serif`
-- **Values**: `mono`, `sans`, `serif` (`mono` is English only)
-
 ### shadow
 
 - **Description**: The text shadow of the text.
@@ -131,8 +134,22 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 
 - **Description**: The border of the avatar.
 - **Default**: `false`
-- **Example**: `border=true`
-- **Values**: `true`, `false`
+- **Example**: `border=0D8ABC`
+- **Values**: Any valid hex color code or `false`
+
+### border-style
+
+- **Description**: The border style of the avatar.
+- **Default**: `solid`
+- **Example**: `border-style=dashed`
+- **Values**: `solid`, `dashed`, `dotted`
+
+### border-width
+
+- **Description**: The border width of the avatar.
+- **Default**: `0.5`
+- **Example**: `border-width=1`
+- **Values**: Any decimal between `0.1` and `1`
 
 ### opacity
 
@@ -140,6 +157,13 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Default**: `1`
 - **Example**: `opacity=0.5`
 - **Values**: Any decimal between `0` and `1`
+
+### reverse
+
+- **Description**: The reverse of the text.
+- **Default**: `false`
+- **Example**: `reverse=true`
+- **Values**: `true`, `false`
 
 ### oblique
 
