@@ -17,10 +17,13 @@ const DEFAULTS = {
   FONT_SIZE: 0.5,
   FONT_FAMILY: 'sans',
   NAME_LENGTH: 40,
+  BORDER_WIDTH: 0.5,
   MIN_SIZE: 16,
   MAX_SIZE: 512,
   MIN_FONT_SIZE: 0.1,
   MAX_FONT_SIZE: 1,
+  MIN_BORDER_WIDTH: 0.1,
+  MAX_BORDER_WIDTH: 1,
 };
 
 type Bindings = {};
@@ -40,6 +43,7 @@ export type Options = {
   shadow: boolean;
   border: string | null;
   borderStyle: string;
+  borderWidth: number;
   opacity: number;
   reverse: boolean;
   oblique: boolean;
@@ -101,11 +105,19 @@ const getValidatedOptions = (c: any): Options => {
   const bold = c.req.query('bold') === 'true';
   const uppercase = c.req.query('uppercase') !== 'false';
   const format = c.req.query('format') || DEFAULTS.FORMAT;
+  const shadow = c.req.query('shadow') === 'true';
+
+  // Font options
   const fontSize = Number(c.req.query('font-size')) || DEFAULTS.FONT_SIZE;
   const fontFamily = c.req.query('font-family') || DEFAULTS.FONT_FAMILY;
-  const shadow = c.req.query('shadow') === 'true';
+
+  // Border options
   const border = c.req.query('border') || null;
   const borderStyle = c.req.query('border-style') || 'solid';
+  const borderWidth =
+    Number(c.req.query('border-width')) || DEFAULTS.BORDER_WIDTH;
+
+  // Additional options
   const opacity = Number(c.req.query('opacity')) || 1;
   const reverse = c.req.query('reverse') === 'true';
   const oblique = c.req.query('oblique') === 'true';
@@ -117,6 +129,10 @@ const getValidatedOptions = (c: any): Options => {
   const newFontSize = Math.max(
     DEFAULTS.MIN_FONT_SIZE,
     Math.min(DEFAULTS.MAX_FONT_SIZE, fontSize),
+  );
+  const newBorderWidth = Math.max(
+    DEFAULTS.MIN_BORDER_WIDTH,
+    Math.min(DEFAULTS.MAX_BORDER_WIDTH, borderWidth),
   );
 
   return {
@@ -134,6 +150,7 @@ const getValidatedOptions = (c: any): Options => {
     shadow,
     border: border && isHex(border) ? `#${border}` : null,
     borderStyle,
+    borderWidth: newBorderWidth,
     opacity,
     reverse,
     oblique,

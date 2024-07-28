@@ -16,7 +16,9 @@ function Component(options: Options) {
     whiteSpace: 'nowrap',
     display: 'flex',
     paddingBottom: '0.15em',
-    border: options.border ? `0.1em ${borderStyle} ${options.border}` : 'none',
+    border: options.border
+      ? `${options.borderWidth / 2}em ${borderStyle} ${options.border}`
+      : 'none',
     opacity: options.opacity,
   };
 
