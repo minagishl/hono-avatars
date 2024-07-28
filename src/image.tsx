@@ -2,47 +2,75 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-wasm';
 import { Options } from './index';
 
+const FONT_SIZE_DIVISOR = 20;
+const BORDER_WIDTH_DIVISOR = 2;
+const TEXT_SHADOW = '0 0 0.1em rgba(0, 0, 0, 0.5)';
+const FONT_FAMILY_DEFAULT = 'Noto Sans JP';
+const FONT_FAMILY_MONO = 'Noto Sans Mono';
+const FONT_FAMILY_SERIF = 'Noto Serif JP';
+const USER_AGENT =
+  'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
+
 function Component(options: Options) {
-  const borderStyle = options.borderStyle === 'dashed' ? 'dashed' : 'solid';
+  const {
+    borderStyle,
+    background,
+    fontSize,
+    size,
+    bold,
+    rounded,
+    border,
+    borderWidth,
+    opacity,
+    color,
+    rotate,
+    shadow,
+    fontFamily,
+    blur,
+    oblique,
+    name,
+  } = options;
+
+  const computedBorderStyle = borderStyle === 'dashed' ? 'dashed' : 'solid';
 
   const containerStyle = {
     height: '100%',
     width: '100%',
     position: 'relative',
-    backgroundColor: options.background,
-    fontSize: `${(options.fontSize * options.size) / 20}rem`,
-    fontWeight: options.bold ? 'bold' : 'normal',
-    borderRadius: options.rounded ? '50%' : '0',
+    backgroundColor: background,
+    fontSize: `${(fontSize * size) / FONT_SIZE_DIVISOR}rem`,
+    fontWeight: bold ? 'bold' : 'normal',
+    borderRadius: rounded ? '50%' : '0',
     whiteSpace: 'nowrap',
     display: 'flex',
-    border: options.border
-      ? `${options.borderWidth / 2}em ${borderStyle} ${options.border}`
+    border: border
+      ? `${borderWidth / BORDER_WIDTH_DIVISOR}em ${computedBorderStyle} ${border}`
       : 'none',
-    opacity: options.opacity,
+    opacity: opacity,
   };
 
   const textStyle = {
     display: 'flex',
-    color: options.color,
+    color: color,
     fontSize: 'inherit',
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: `translate(-50%, -50%) rotate(${options.rotate}deg)`,
-    textShadow: options.shadow ? '0 0 0.1em rgba(0, 0, 0, 0.5)' : 'none',
-    fontFamily: options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'inherit',
-    filter: options.blur ? `blur(${options.blur / 10}em)` : 'none',
+    transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
+    textShadow: shadow ? TEXT_SHADOW : 'none',
+    fontFamily: fontFamily === 'mono' ? FONT_FAMILY_MONO : 'inherit',
+    filter: blur ? `blur(${blur / 10}em)` : 'none',
   };
 
   const textInnerStyle = {
     paddingBottom: '0.15em',
-    ...(options.oblique && { transform: 'skewX(-10deg)' }),
+    ...(oblique && { transform: 'skewX(-10deg)' }),
   };
 
   return (
     <div style={containerStyle}>
       <div style={textStyle}>
-        <span style={textInnerStyle}>{options.name}</span>
+        <span style={textInnerStyle}>{name}</span>
       </div>
     </div>
   );
@@ -51,25 +79,18 @@ function Component(options: Options) {
 async function fetchFont(text: string, weight: number, fontFamily: string) {
   const url = new URL('https://fonts.googleapis.com/css2');
 
-  switch (fontFamily) {
-    case 'serif':
-      url.searchParams.append('family', `Noto Serif JP:wght@${weight}`);
-      break;
-    case 'mono':
-      url.searchParams.append('family', `Noto Sans Mono:wght@${weight}`);
-      break;
-    default:
-      url.searchParams.append('family', `Noto Sans JP:wght@${weight}`);
-      break;
-  }
+  const fontFamilyParam =
+    fontFamily === 'serif'
+      ? FONT_FAMILY_SERIF
+      : fontFamily === 'mono'
+        ? FONT_FAMILY_MONO
+        : FONT_FAMILY_DEFAULT;
 
+  url.searchParams.append('family', `${fontFamilyParam}:wght@${weight}`);
   url.searchParams.append('text', text);
 
   const response = await fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1',
-    },
+    headers: { 'User-Agent': USER_AGENT },
   });
 
   if (!response.ok) {
@@ -77,14 +98,12 @@ async function fetchFont(text: string, weight: number, fontFamily: string) {
   }
 
   const css = await response.text();
-
-  const resource = css.match(
+  const fontUrlMatch = css.match(
     /src: url\((?<fontUrl>[^)]+)\) format\(['"](?:opentype|truetype)['"]\)/u,
   );
+  const fontUrl = fontUrlMatch?.groups?.fontUrl;
 
-  const fontUrl = resource?.groups?.fontUrl;
-
-  if (fontUrl == null) {
+  if (!fontUrl) {
     throw new Error('Failed to parse font');
   }
 
@@ -104,9 +123,8 @@ export default async function generateImage(
     options.bold ? 700 : 400,
     options.fontFamily,
   );
-
   const fontName =
-    options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'Noto Sans JP';
+    options.fontFamily === 'mono' ? FONT_FAMILY_MONO : FONT_FAMILY_DEFAULT;
 
   const svg = await satori(<Component {...options} />, {
     width: options.size,
