@@ -4,6 +4,7 @@ import { Options } from './index';
 
 const FONT_SIZE_DIVISOR = 20;
 const BORDER_WIDTH_DIVISOR = 2;
+const FILTER_BLUR_DIVISOR = 10;
 const TEXT_SHADOW = '0 0 0.1em rgba(0, 0, 0, 0.5)';
 const FONT_FAMILY_DEFAULT = 'Noto Sans JP';
 const FONT_FAMILY_MONO = 'Noto Sans Mono';
@@ -59,7 +60,7 @@ function Component(options: Options) {
     transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
     textShadow: shadow ? TEXT_SHADOW : 'none',
     fontFamily: fontFamily === 'mono' ? FONT_FAMILY_MONO : 'inherit',
-    filter: blur ? `blur(${blur / 10}em)` : 'none',
+    filter: blur ? `blur(${blur / FILTER_BLUR_DIVISOR}em)` : 'none',
   };
 
   const textInnerStyle = {
