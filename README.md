@@ -33,6 +33,7 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - `bold` - The font weight of the text. Default is `false`.
 - `uppercase` - The text transform of the text. Default is `true`.
 - `format` - The format of the image. Default is `png`.
+- `rotate` - The rotation of the text. Default is `0`.
 - `shadow` - The text shadow of the text. Default is `false`.
 - `border` - The border of the avatar. Default is `false`.
 - `border-style` - The border style of the avatar. Default is `solid`.
@@ -122,6 +123,13 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Default**: `png`
 - **Example**: `format=svg`
 - **Values**: `png`, `svg`
+
+### rotate
+
+- **Description**: The rotation of the text.
+- **Default**: `0`
+- **Example**: `rotate=45`
+- **Values**: Any integer between `-360` and `360`
 
 ### shadow
 

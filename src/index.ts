@@ -14,12 +14,15 @@ const DEFAULTS = {
   SIZE: 64,
   LENGTH: 2,
   FORMAT: 'png',
+  ROTATE: 0,
   FONT_SIZE: 0.5,
   FONT_FAMILY: 'sans',
   NAME_LENGTH: 40,
   BORDER_WIDTH: 0.5,
   MIN_SIZE: 16,
   MAX_SIZE: 512,
+  MIN_ROTATE: -360,
+  MAX_ROTATE: 360,
   MIN_FONT_SIZE: 0.1,
   MAX_FONT_SIZE: 1,
   MIN_BORDER_WIDTH: 0.1,
@@ -40,6 +43,7 @@ export type Options = {
   format: string;
   fontSize: number;
   fontFamily: string;
+  rotate: number;
   shadow: boolean;
   border: string | null;
   borderStyle: string;
@@ -105,6 +109,7 @@ const getValidatedOptions = (c: any): Options => {
   const bold = c.req.query('bold') === 'true';
   const uppercase = c.req.query('uppercase') !== 'false';
   const format = c.req.query('format') || DEFAULTS.FORMAT;
+  const rotate = Number(c.req.query('rotate')) || 0;
   const shadow = c.req.query('shadow') === 'true';
 
   // Font options
@@ -134,6 +139,10 @@ const getValidatedOptions = (c: any): Options => {
     DEFAULTS.MIN_BORDER_WIDTH,
     Math.min(DEFAULTS.MAX_BORDER_WIDTH, borderWidth),
   );
+  const newRotate = Math.max(
+    DEFAULTS.MIN_ROTATE,
+    Math.min(DEFAULTS.MAX_ROTATE, rotate),
+  );
 
   return {
     name: transformName(spaceDeleteName, length, uppercase, reverse),
@@ -147,6 +156,7 @@ const getValidatedOptions = (c: any): Options => {
     format,
     fontSize: newFontSize,
     fontFamily,
+    rotate: newRotate,
     shadow,
     border: border && isHex(border) ? `#${border}` : null,
     borderStyle,

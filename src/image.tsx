@@ -15,7 +15,6 @@ function Component(options: Options) {
     borderRadius: options.rounded ? '50%' : '0',
     whiteSpace: 'nowrap',
     display: 'flex',
-    paddingBottom: '0.15em',
     border: options.border
       ? `${options.borderWidth / 2}em ${borderStyle} ${options.border}`
       : 'none',
@@ -29,12 +28,13 @@ function Component(options: Options) {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    transform: `translate(-50%, -50%) rotate(${options.rotate}deg)`,
     textShadow: options.shadow ? '0 0 0.1em rgba(0, 0, 0, 0.5)' : 'none',
     fontFamily: options.fontFamily === 'mono' ? 'Noto Sans Mono' : 'inherit',
   };
 
   const textInnerStyle = {
+    paddingBottom: '0.15em',
     ...(options.oblique && { transform: 'skewX(-10deg)' }),
   };
 
