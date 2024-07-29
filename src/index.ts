@@ -8,53 +8,54 @@ await initWasm(WASM_RESVG);
 
 // Define constants for default values
 const DEFAULTS = {
-  NAME: 'John+Doe',
   BACKGROUND: 'DDDDDD',
-  COLOR: '222222',
-  SIZE: 64,
   BLUR: 0,
-  LENGTH: 2,
-  FORMAT: 'png',
-  ROTATE: 0,
-  FONT_SIZE: 0.5,
-  FONT_FAMILY: 'sans',
-  NAME_LENGTH: 40,
+  BOLD: false,
   BORDER_WIDTH: 0.5,
-  MIN_SIZE: 16,
+  COLOR: '222222',
+  FONT_FAMILY: 'sans',
+  FONT_SIZE: 0.5,
+  FORMAT: 'png',
+  LENGTH: 2,
+  MAX_BLUR: 1,
+  MAX_BORDER_WIDTH: 1,
+  MAX_FONT_SIZE: 1,
+  MAX_ROTATE: 360,
   MAX_SIZE: 512,
   MIN_BLUR: 0,
-  MAX_BLUR: 1,
-  MIN_ROTATE: -360,
-  MAX_ROTATE: 360,
-  MIN_FONT_SIZE: 0.1,
-  MAX_FONT_SIZE: 1,
   MIN_BORDER_WIDTH: 0.1,
-  MAX_BORDER_WIDTH: 1,
+  MIN_FONT_SIZE: 0.1,
+  MIN_ROTATE: -360,
+  MIN_SIZE: 16,
+  NAME: 'John+Doe',
+  NAME_LENGTH: 40,
+  ROTATE: 0,
+  SIZE: 64,
 };
 
 type Bindings = {};
 
 export type Options = {
-  name: string;
   background: string;
-  color: string;
-  size: number;
   blur: number;
-  length: number;
-  rounded: boolean;
   bold: boolean;
-  uppercase: boolean;
-  format: string;
-  fontSize: number;
-  fontFamily: string;
-  rotate: number;
-  shadow: boolean;
   border: string | null;
   borderStyle: string;
   borderWidth: number;
+  color: string;
+  fontFamily: string;
+  fontSize: number;
+  format: string;
+  length: number;
+  name: string;
+  oblique: boolean;
   opacity: number;
   reverse: boolean;
-  oblique: boolean;
+  rotate: number;
+  rounded: boolean;
+  shadow: boolean;
+  size: number;
+  uppercase: boolean;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -101,41 +102,40 @@ function transformName(
 
 // Helper function to validate and parse query parameters
 const getValidatedOptions = (c: any): Options => {
-  const name = c.req.query('name') || DEFAULTS.NAME;
-  const background = c.req.query('background') || DEFAULTS.BACKGROUND;
-  const color = c.req.query('color') || DEFAULTS.COLOR;
-  const size = Number(c.req.query('size')) || DEFAULTS.SIZE;
-  const blur = Number(c.req.query('blur')) || DEFAULTS.BLUR;
-  const length =
-    c.req.query('length') === 'full'
-      ? name.length
-      : Number(c.req.query('length')) || DEFAULTS.LENGTH;
-  const rounded = c.req.query('rounded') === 'true';
-  const bold = c.req.query('bold') === 'true';
-  const uppercase = c.req.query('uppercase') !== 'false';
-  const format = c.req.query('format') || DEFAULTS.FORMAT;
-  const rotate = Number(c.req.query('rotate')) || 0;
-  const shadow = c.req.query('shadow') === 'true';
+  // Parse query parameters
+  const query = c.req.query();
 
-  // Font options
-  const fontSize = Number(c.req.query('font-size')) || DEFAULTS.FONT_SIZE;
-  const fontFamily = c.req.query('font-family') || DEFAULTS.FONT_FAMILY;
+  const background = query.background || DEFAULTS.BACKGROUND;
+  const blur = Number(query.blur) || DEFAULTS.BLUR;
+  const bold = query.bold === 'true';
 
   // Border options
-  const border = c.req.query('border') || null;
-  const borderStyle = c.req.query('border-style') || 'solid';
-  const borderWidth =
-    Number(c.req.query('border-width')) || DEFAULTS.BORDER_WIDTH;
+  const border = query.border || null;
+  const borderStyle = query['border-style'] || 'solid';
+  const borderWidth = Number(query['border-width']) || DEFAULTS.BORDER_WIDTH;
 
-  // Additional options
-  const opacity = Number(c.req.query('opacity')) || 1;
-  const reverse = c.req.query('reverse') === 'true';
-  const oblique = c.req.query('oblique') === 'true';
+  // Font options
+  const color = query.color || DEFAULTS.COLOR;
+  const fontSize = Number(query['font-size']) || DEFAULTS.FONT_SIZE;
+  const fontFamily = query['font-family'] || DEFAULTS.FONT_FAMILY;
+
+  const format = query.format || DEFAULTS.FORMAT;
+  const length = query.length || DEFAULTS.LENGTH;
+  const name = query.name || DEFAULTS.NAME;
+  const oblique = query.oblique === 'true';
+  const opacity = Number(query.opacity) || 1;
+  const reverse = query.reverse === 'true';
+  const rotate = Number(query.rotate) || 0;
+  const rounded = query.rounded === 'true';
+  const shadow = query.shadow === 'true'; // Text shadow
+  const size = Number(query.size) || DEFAULTS.SIZE;
+  const uppercase = query.uppercase !== 'false';
 
   const spaceDeleteName = removeEmojis(name.replace(/ /g, '+'));
   const newBackground = isHex(background)
     ? `#${background}`
     : `#${DEFAULTS.BACKGROUND}`;
+  const newLength = length === 'full' ? spaceDeleteName.length : Number(length);
   const newFontSize = Math.max(
     DEFAULTS.MIN_FONT_SIZE,
     Math.min(DEFAULTS.MAX_FONT_SIZE, fontSize),
@@ -150,26 +150,26 @@ const getValidatedOptions = (c: any): Options => {
   );
 
   return {
-    name: transformName(spaceDeleteName, length, uppercase, reverse),
     background: newBackground,
-    color: isHex(color) ? `#${color}` : `#${DEFAULTS.COLOR}`,
-    size: Math.max(DEFAULTS.MIN_SIZE, Math.min(DEFAULTS.MAX_SIZE, size)),
     blur: Math.max(DEFAULTS.MIN_BLUR, Math.min(DEFAULTS.MAX_BLUR, blur)),
-    length: Math.round(length),
-    rounded,
     bold,
-    uppercase,
-    format,
-    fontSize: newFontSize,
-    fontFamily,
-    rotate: newRotate,
-    shadow,
     border: border && isHex(border) ? `#${border}` : null,
     borderStyle,
     borderWidth: newBorderWidth,
+    color: isHex(color) ? `#${color}` : `#${DEFAULTS.COLOR}`,
+    fontFamily,
+    fontSize: newFontSize,
+    format,
+    length: Math.round(length),
+    name: transformName(spaceDeleteName, length, uppercase, reverse),
+    oblique,
     opacity,
     reverse,
-    oblique,
+    rotate: newRotate,
+    rounded,
+    shadow,
+    size: Math.max(DEFAULTS.MIN_SIZE, Math.min(DEFAULTS.MAX_SIZE, size)),
+    uppercase,
   };
 };
 
