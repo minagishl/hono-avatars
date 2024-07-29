@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono } from 'hono/quick';
 import generateImage from './image';
 import getValidatedOptions from './helper';
 import { initWasm } from '@resvg/resvg-wasm';
