@@ -160,7 +160,7 @@ const getValidatedOptions = (c: any): Options => {
     fontFamily,
     fontSize: newFontSize,
     format,
-    length: Math.round(length),
+    length: Math.round(newLength),
     name: transformName(spaceDeleteName, length, uppercase, reverse),
     oblique,
     opacity,
