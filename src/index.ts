@@ -97,7 +97,7 @@ app.get('/', async (c) => {
 
   let image: Uint8Array | string | null;
 
-  if (c.env.CACHE_ENABLED) {
+  if (c.env.CACHE_ENABLED === 'true') {
     if (options.format === 'svg') {
       image = await c.env.KV.get(key, 'text');
       c.header('Content-Type', 'image/svg+xml');
@@ -119,7 +119,7 @@ app.get('/', async (c) => {
 
   image = await generateImage(options);
 
-  if (c.env.CACHE_ENABLED) {
+  if (c.env.CACHE_ENABLED === 'true') {
     if (options.format === 'svg') {
       await c.env.KV.put(key, image as string, {
         expirationTtl: 60 * 60 * 24,
