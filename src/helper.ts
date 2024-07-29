@@ -111,3 +111,41 @@ export default function getValidatedOptions(c: any): Options {
     uppercase,
   };
 }
+
+// helper function to generate a key from a JSON object
+export async function generateKeyFromJSON(json: any): Promise<string> {
+  // Convert to JSON string
+  const jsonString = JSON.stringify(json);
+
+  // Use a text encoder to encode the string
+  const encoder = new TextEncoder();
+  const data = encoder.encode(jsonString);
+
+  // Generate a SHA-256 hash using the Web Crypto API
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+  // Convert the hash value to a Base64 string
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashBase64 = btoa(String.fromCharCode(...hashArray));
+
+  return hashBase64;
+}
+
+export function uint8ArrayToBase64(uint8Array: Uint8Array) {
+  let binary = '';
+  const len = uint8Array.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(uint8Array[i]);
+  }
+  return btoa(binary);
+}
+
+export function base64ToUint8Array(base64: string) {
+  const binary = atob(base64);
+  const len = binary.length;
+  const uint8Array = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    uint8Array[i] = binary.charCodeAt(i);
+  }
+  return uint8Array;
+}

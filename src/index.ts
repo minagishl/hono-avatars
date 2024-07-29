@@ -2,12 +2,23 @@ import { Hono } from 'hono';
 import generateImage from './image';
 import getValidatedOptions from './helper';
 import { initWasm } from '@resvg/resvg-wasm';
+
+// Cache-related imports
+import {
+  generateKeyFromJSON,
+  uint8ArrayToBase64,
+  base64ToUint8Array,
+} from './helper';
+
 // @ts-ignore
 import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm';
 
 await initWasm(WASM_RESVG);
 
-type Bindings = {};
+type Bindings = {
+  KV: KVNamespace;
+  CACHE_ENABLED: boolean;
+};
 
 // Define constants for default values
 export const DEFAULTS = {
@@ -81,11 +92,39 @@ app.get('/', async (c) => {
     return c.json({ error: 'Name is too long' });
   }
 
-  c.header(
-    'Content-Type',
-    options.format === 'svg' ? 'image/svg+xml' : 'image/png',
-  );
-  return c.body(await generateImage(options));
+  // Generate cache key
+  const key = await generateKeyFromJSON(options);
+
+  let image: Uint8Array | string | null;
+
+  if (options.format === 'svg') {
+    image = await c.env.KV.get(key, 'text');
+    c.header('Content-Type', 'image/svg+xml');
+  } else {
+    image = await c.env.KV.get(key, 'text');
+    c.header('Content-Type', 'image/png');
+  }
+
+  if (image) {
+    c.header('Cache-Control', 'public, max-age=86400');
+    c.header('Cache', 'HIT');
+    return c.body(options.format === 'svg' ? image : base64ToUint8Array(image));
+  }
+
+  c.header('Cache', 'MISS');
+  image = await generateImage(options);
+
+  if (options.format === 'svg') {
+    await c.env.KV.put(key, image as string, {
+      expirationTtl: 60 * 60 * 24,
+    });
+  } else {
+    await c.env.KV.put(key, uint8ArrayToBase64(image as Uint8Array), {
+      expirationTtl: 60 * 60 * 24,
+    });
+  }
+
+  return c.body(image);
 });
 
 export default app;
