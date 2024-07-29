@@ -17,7 +17,7 @@ await initWasm(WASM_RESVG);
 
 type Bindings = {
   KV: KVNamespace;
-  CACHE_ENABLED: boolean;
+  CACHE_ENABLED: string;
 };
 
 // Define constants for default values
