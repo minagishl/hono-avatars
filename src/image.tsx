@@ -53,13 +53,11 @@ function Component(options: Options) {
   const textStyle = {
     display: 'flex',
     color: color,
-    fontSize: 'inherit',
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
     textShadow: shadow ? TEXT_SHADOW : 'none',
-    fontFamily: fontFamily === 'mono' ? FONT_FAMILY_MONO : 'inherit',
     filter: blur ? `blur(${blur / FILTER_BLUR_DIVISOR}em)` : 'none',
   };
 
@@ -119,26 +117,28 @@ async function fetchFont(text: string, weight: number, fontFamily: string) {
 export default async function generateImage(
   options: Options,
 ): Promise<Uint8Array | string> {
-  const font = await fetchFont(
-    options.name,
-    options.bold ? 700 : 400,
-    options.fontFamily,
-  );
-  const fontName =
-    options.fontFamily === 'mono' ? FONT_FAMILY_MONO : FONT_FAMILY_DEFAULT;
+  try {
+    const font = await fetchFont(
+      options.name,
+      options.bold ? 700 : 400,
+      options.fontFamily,
+    );
 
-  const svg = await satori(<Component {...options} />, {
-    width: options.size,
-    height: options.size,
-    fonts: [{ data: font, name: fontName }],
-  });
+    const svg = await satori(<Component {...options} />, {
+      width: options.size,
+      height: options.size,
+      fonts: [{ data: font, name: 'font' }],
+    });
 
-  if (options.format === 'svg') {
-    return svg;
-  } else {
-    const resvg = new Resvg(svg);
-    resvg.cropByBBox(resvg.innerBBox()!);
-    const image = resvg.render().asPng();
-    return image;
+    if (options.format === 'svg') {
+      return svg;
+    } else {
+      const resvg = new Resvg(svg);
+      resvg.cropByBBox(resvg.innerBBox()!);
+      const image = resvg.render().asPng();
+      return image;
+    }
+  } catch (error: any) {
+    throw new Error(`Failed to generate image: ${error.message}`);
   }
 }
