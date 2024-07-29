@@ -53,7 +53,7 @@ export default function getValidatedOptions(c: any): Options {
   const fontFamily = query['font-family'] || DEFAULTS.FONT_FAMILY;
 
   const format = query.format || DEFAULTS.FORMAT;
-  const length = query.length || DEFAULTS.LENGTH;
+  const length = query['length'] || DEFAULTS.LENGTH;
   const name = query.name || DEFAULTS.NAME;
   const oblique = query.oblique === 'true';
   const opacity = Number(query.opacity) || 1;
@@ -68,7 +68,8 @@ export default function getValidatedOptions(c: any): Options {
   const newBackground = isHex(background)
     ? `#${background}`
     : `#${DEFAULTS.BACKGROUND}`;
-  const newLength = length === 'full' ? spaceDeleteName.length : Number(length);
+  let newLength = length === 'full' ? spaceDeleteName.length : Number(length);
+  newLength = Math.round(newLength);
 
   // Validate and parse query parameters
   const validatedFontSize = Math.max(
@@ -95,8 +96,8 @@ export default function getValidatedOptions(c: any): Options {
     fontFamily,
     fontSize: validatedFontSize,
     format,
-    length: Math.round(newLength),
-    name: transformName(spaceDeleteName, length, uppercase, reverse),
+    length: newLength,
+    name: transformName(spaceDeleteName, newLength, uppercase, reverse),
     oblique,
     opacity,
     reverse,
