@@ -97,31 +97,38 @@ app.get('/', async (c) => {
 
   let image: Uint8Array | string | null;
 
-  if (options.format === 'svg') {
-    image = await c.env.KV.get(key, 'text');
-    c.header('Content-Type', 'image/svg+xml');
-  } else {
-    image = await c.env.KV.get(key, 'text');
-    c.header('Content-Type', 'image/png');
+  if (c.env.CACHE_ENABLED) {
+    if (options.format === 'svg') {
+      image = await c.env.KV.get(key, 'text');
+      c.header('Content-Type', 'image/svg+xml');
+    } else {
+      image = await c.env.KV.get(key, 'text');
+      c.header('Content-Type', 'image/png');
+    }
+
+    if (image) {
+      c.header('Cache-Control', 'public, max-age=86400');
+      c.header('Cache', 'HIT');
+      return c.body(
+        options.format === 'svg' ? image : base64ToUint8Array(image),
+      );
+    }
+
+    c.header('Cache', 'MISS');
   }
 
-  if (image) {
-    c.header('Cache-Control', 'public, max-age=86400');
-    c.header('Cache', 'HIT');
-    return c.body(options.format === 'svg' ? image : base64ToUint8Array(image));
-  }
-
-  c.header('Cache', 'MISS');
   image = await generateImage(options);
 
-  if (options.format === 'svg') {
-    await c.env.KV.put(key, image as string, {
-      expirationTtl: 60 * 60 * 24,
-    });
-  } else {
-    await c.env.KV.put(key, uint8ArrayToBase64(image as Uint8Array), {
-      expirationTtl: 60 * 60 * 24,
-    });
+  if (c.env.CACHE_ENABLED) {
+    if (options.format === 'svg') {
+      await c.env.KV.put(key, image as string, {
+        expirationTtl: 60 * 60 * 24,
+      });
+    } else {
+      await c.env.KV.put(key, uint8ArrayToBase64(image as Uint8Array), {
+        expirationTtl: 60 * 60 * 24,
+      });
+    }
   }
 
   return c.body(image);
