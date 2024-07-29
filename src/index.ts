@@ -129,6 +129,8 @@ app.get('/', async (c) => {
         expirationTtl: 60 * 60 * 24,
       });
     }
+  } else {
+    c.header('Cahe', 'DISABLED');
   }
 
   return c.body(image);
