@@ -1,14 +1,16 @@
 import { Options, DEFAULTS } from '.';
 
+// Precompiled regular expressions
+const hexRegex = /^[0-9A-Fa-f]+$/;
+const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+
 // Helper function to check if a string is a valid hex string
 function isHex(text: string): boolean {
-  const hexRegex = /^[0-9A-Fa-f]+$/;
   return hexRegex.test(text);
 }
 
 // Helper function to remove emojis from text
 function removeEmojis(text: string): string {
-  const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
   return text.replace(emojiRegex, '');
 }
 
@@ -27,9 +29,8 @@ function transformName(
       parts[reverse ? 0 : 1].slice(0, reverse ? 1 : newLength);
     return uppercase ? combinedName.toUpperCase() : combinedName;
   } else {
-    return uppercase
-      ? name.slice(0, length).toUpperCase()
-      : name.slice(0, length);
+    const truncatedName = name.slice(0, length);
+    return uppercase ? truncatedName.toUpperCase() : truncatedName;
   }
 }
 
@@ -39,36 +40,38 @@ export default function getValidatedOptions(c: any): Options {
   const query = c.req.query();
 
   const background = query.background || DEFAULTS.BACKGROUND;
-  const blur = Number(query.blur) || DEFAULTS.BLUR;
+  const blur = parseFloat(query.blur) || DEFAULTS.BLUR;
   const bold = query.bold === 'true';
 
   // Border options
   const border = query.border || null;
   const borderStyle = query['border-style'] || 'solid';
-  const borderWidth = Number(query['border-width']) || DEFAULTS.BORDER_WIDTH;
+  const borderWidth =
+    parseFloat(query['border-width']) || DEFAULTS.BORDER_WIDTH;
 
   // Font options
   const color = query.color || DEFAULTS.COLOR;
-  const fontSize = Number(query['font-size']) || DEFAULTS.FONT_SIZE;
+  const fontSize = parseFloat(query['font-size']) || DEFAULTS.FONT_SIZE;
   const fontFamily = query['font-family'] || DEFAULTS.FONT_FAMILY;
 
   const format = query.format || DEFAULTS.FORMAT;
   const length = query['length'] || DEFAULTS.LENGTH;
   const name = query.name || DEFAULTS.NAME;
   const oblique = query.oblique === 'true';
-  const opacity = Number(query.opacity) || 1;
+  const opacity = parseFloat(query.opacity) || 1;
   const reverse = query.reverse === 'true';
-  const rotate = Number(query.rotate) || 0;
+  const rotate = parseFloat(query.rotate) || 0;
   const rounded = query.rounded === 'true';
   const shadow = query.shadow === 'true'; // Text shadow
-  const size = Number(query.size) || DEFAULTS.SIZE;
+  const size = parseFloat(query.size) || DEFAULTS.SIZE;
   const uppercase = query.uppercase !== 'false';
 
   const spaceDeleteName = removeEmojis(name.replace(/ /g, '+'));
   const newBackground = isHex(background)
     ? `#${background}`
     : `#${DEFAULTS.BACKGROUND}`;
-  let newLength = length === 'full' ? spaceDeleteName.length : Number(length);
+  let newLength =
+    length === 'full' ? spaceDeleteName.length : parseFloat(length);
   newLength = Math.round(newLength);
 
   // Validate and parse query parameters
