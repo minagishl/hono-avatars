@@ -115,6 +115,12 @@ app.get('/', async (c) => {
     }
 
     c.header('Cache', 'MISS');
+  } else {
+    c.header(
+      'Content-Type',
+      options.format === 'svg' ? 'image/svg+xml' : 'image/png',
+    );
+    c.header('Cache-Control', 'public, max-age=86400');
   }
 
   image = await generateImage(options);
