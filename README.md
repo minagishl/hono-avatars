@@ -81,7 +81,7 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Description**: The border style of the avatar.
 - **Default**: `solid`
 - **Example**: `border-style=dashed`
-- **Values**: `solid`, `dashed`, `dotted`
+- **Values**: `solid`, `dashed`
 
 ### border-width
 
