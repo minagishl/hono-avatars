@@ -1,13 +1,13 @@
-import { Hono } from 'hono';
-import generateImage from './image';
-import getValidatedOptions from './helper';
 import { initWasm } from '@resvg/resvg-wasm';
+import { Hono } from 'hono';
+import getValidatedOptions from './helper';
+import generateImage from './image';
 
 // Cache-related imports
 import {
+  base64ToUint8Array,
   generateKeyFromJSON,
   uint8ArrayToBase64,
-  base64ToUint8Array,
 } from './helper';
 
 // @ts-ignore

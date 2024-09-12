@@ -1,4 +1,4 @@
-import { Options, DEFAULTS } from '.';
+import { DEFAULTS, type Options } from '.';
 
 // Precompiled regular expressions
 const hexRegex = /^[0-9A-Fa-f]+$/;
@@ -40,30 +40,30 @@ export default function getValidatedOptions(c: any): Options {
   const query = c.req.query();
 
   const background = query.background || DEFAULTS.BACKGROUND;
-  const blur = parseFloat(query.blur) || DEFAULTS.BLUR;
+  const blur = Number.parseFloat(query.blur) || DEFAULTS.BLUR;
   const bold = query.bold === 'true';
 
   // Border options
   const border = query.border || null;
   const borderStyle = query['border-style'] || 'solid';
   const borderWidth =
-    parseFloat(query['border-width']) || DEFAULTS.BORDER_WIDTH;
+    Number.parseFloat(query['border-width']) || DEFAULTS.BORDER_WIDTH;
 
   // Font options
   const color = query.color || DEFAULTS.COLOR;
-  const fontSize = parseFloat(query['font-size']) || DEFAULTS.FONT_SIZE;
+  const fontSize = Number.parseFloat(query['font-size']) || DEFAULTS.FONT_SIZE;
   const fontFamily = query['font-family'] || DEFAULTS.FONT_FAMILY;
 
   const format = query.format || DEFAULTS.FORMAT;
   const length = query['length'] || DEFAULTS.LENGTH;
   const name = query.name || DEFAULTS.NAME;
   const oblique = query.oblique === 'true';
-  const opacity = parseFloat(query.opacity) || 1;
+  const opacity = Number.parseFloat(query.opacity) || 1;
   const reverse = query.reverse === 'true';
-  const rotate = parseFloat(query.rotate) || 0;
+  const rotate = Number.parseFloat(query.rotate) || 0;
   const rounded = query.rounded === 'true';
   const shadow = query.shadow === 'true'; // Text shadow
-  const size = parseFloat(query.size) || DEFAULTS.SIZE;
+  const size = Number.parseFloat(query.size) || DEFAULTS.SIZE;
   const uppercase = query.uppercase !== 'false';
 
   const spaceDeleteName = removeEmojis(name.replace(/ /g, '+'));
@@ -71,7 +71,7 @@ export default function getValidatedOptions(c: any): Options {
     ? `#${background}`
     : `#${DEFAULTS.BACKGROUND}`;
   let newLength =
-    length === 'full' ? spaceDeleteName.length : parseFloat(length);
+    length === 'full' ? spaceDeleteName.length : Number.parseFloat(length);
   newLength = Math.round(newLength);
 
   // Validate and parse query parameters

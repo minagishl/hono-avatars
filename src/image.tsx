@@ -1,6 +1,6 @@
-import satori from 'satori';
 import { Resvg } from '@resvg/resvg-wasm';
-import { Options } from './index';
+import satori from 'satori';
+import type { Options } from './index';
 
 const FONT_SIZE_DIVISOR = 20;
 const BORDER_WIDTH_DIVISOR = 2;
