@@ -5,7 +5,11 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "deploy": "wrangler deploy --minify",
     "dev": "wrangler dev",
-    "format": "prettier --write src/**/*.ts"
+    "check": "biome check ./src",
+    "check:write": "biome check --write ./src",
+    "format": "biome format .",
+    "format:write": "biome format --write ./src",
+    "lint": "biome lint ./src"
   },
   "dependencies": {
     "@resvg/resvg-wasm": "2.4.1",
@@ -13,10 +17,10 @@
     "satori": "^0.10.14"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.0",
     "@cloudflare/workers-types": "^4.20240729.0",
     "esbuild": "^0.23.0",
     "esbuild-plugin-wasm": "^1.1.0",
-    "prettier": "^3.3.3",
     "wrangler": "^3.68.0"
   }
 }
