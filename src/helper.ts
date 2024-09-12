@@ -1,4 +1,6 @@
-import { DEFAULTS, type Options } from '.';
+import type { Context } from 'hono';
+import { DEFAULTS } from '.';
+import type { Options } from '.';
 
 // Precompiled regular expressions
 const hexRegex = /^[0-9A-Fa-f]+$/;
@@ -28,14 +30,14 @@ function transformName(
       parts[reverse ? 1 : 0].slice(0, reverse ? newLength : 1) +
       parts[reverse ? 0 : 1].slice(0, reverse ? 1 : newLength);
     return uppercase ? combinedName.toUpperCase() : combinedName;
-  } else {
-    const truncatedName = name.slice(0, length);
-    return uppercase ? truncatedName.toUpperCase() : truncatedName;
   }
+
+  const truncatedName = name.slice(0, length);
+  return uppercase ? truncatedName.toUpperCase() : truncatedName;
 }
 
 // Helper function to validate and parse query parameters
-export default function getValidatedOptions(c: any): Options {
+export default function getValidatedOptions(c: Context): Options {
   // Parse query parameters
   const query = c.req.query();
 
@@ -55,7 +57,7 @@ export default function getValidatedOptions(c: any): Options {
   const fontFamily = query['font-family'] || DEFAULTS.FONT_FAMILY;
 
   const format = query.format || DEFAULTS.FORMAT;
-  const length = query['length'] || DEFAULTS.LENGTH;
+  const length = query.length || DEFAULTS.LENGTH;
   const name = query.name || DEFAULTS.NAME;
   const oblique = query.oblique === 'true';
   const opacity = Number.parseFloat(query.opacity) || 1;
@@ -71,7 +73,9 @@ export default function getValidatedOptions(c: any): Options {
     ? `#${background}`
     : `#${DEFAULTS.BACKGROUND}`;
   let newLength =
-    length === 'full' ? spaceDeleteName.length : Number.parseFloat(length);
+    length === 'full'
+      ? spaceDeleteName.length
+      : Number.parseFloat(length.toString());
   newLength = Math.round(newLength);
 
   // Validate and parse query parameters
@@ -113,7 +117,9 @@ export default function getValidatedOptions(c: any): Options {
 }
 
 // helper function to generate a key from a JSON object
-export async function generateKeyFromJSON(json: any): Promise<string> {
+export async function generateKeyFromJSON(
+  json: Record<string, unknown>,
+): Promise<string> {
   // Convert to JSON string
   const jsonString = JSON.stringify(json);
 

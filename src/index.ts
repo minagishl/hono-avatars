@@ -74,9 +74,9 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Helper function to check if text includes Japanese characters
 function includeJA(text: string): boolean {
-  return text.match(/^[\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]+$/)
-    ? true
-    : false;
+  return !!text.match(
+    /^[\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]+$/,
+  );
 }
 
 app.get('/', async (c) => {

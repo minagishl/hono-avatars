@@ -26,7 +26,6 @@ function Component(options: Options) {
     color,
     rotate,
     shadow,
-    fontFamily,
     blur,
     oblique,
     name,
@@ -45,7 +44,9 @@ function Component(options: Options) {
     whiteSpace: 'nowrap',
     display: 'flex',
     border: border
-      ? `${borderWidth / BORDER_WIDTH_DIVISOR}em ${computedBorderStyle} ${border}`
+      ? `${
+          borderWidth / BORDER_WIDTH_DIVISOR
+        }em ${computedBorderStyle} ${border}`
       : 'none',
     opacity: opacity,
   };
@@ -82,8 +83,8 @@ async function fetchFont(text: string, weight: number, fontFamily: string) {
     fontFamily === 'serif'
       ? FONT_FAMILY_SERIF
       : fontFamily === 'mono'
-        ? FONT_FAMILY_MONO
-        : FONT_FAMILY_DEFAULT;
+      ? FONT_FAMILY_MONO
+      : FONT_FAMILY_DEFAULT;
 
   url.searchParams.append('family', `${fontFamilyParam}:wght@${weight}`);
   url.searchParams.append('text', text);
@@ -132,13 +133,20 @@ export default async function generateImage(
 
     if (options.format === 'svg') {
       return svg;
-    } else {
-      const resvg = new Resvg(svg);
-      resvg.cropByBBox(resvg.innerBBox()!);
-      const image = resvg.render().asPng();
-      return image;
     }
-  } catch (error: any) {
-    throw new Error(`Failed to generate image: ${error.message}`);
+
+    const resvg = new Resvg(svg);
+    const bbox = resvg.innerBBox();
+
+    if (bbox) {
+      resvg.cropByBBox(bbox);
+    } else {
+      throw new Error('Failed to get inner bounding box');
+    }
+
+    const image = resvg.render().asPng();
+    return image;
+  } catch (error: unknown) {
+    throw new Error(`Failed to generate image: ${error}`);
   }
 }
