@@ -83,8 +83,8 @@ async function fetchFont(text: string, weight: number, fontFamily: string) {
     fontFamily === 'serif'
       ? FONT_FAMILY_SERIF
       : fontFamily === 'mono'
-      ? FONT_FAMILY_MONO
-      : FONT_FAMILY_DEFAULT;
+        ? FONT_FAMILY_MONO
+        : FONT_FAMILY_DEFAULT;
 
   url.searchParams.append('family', `${fontFamilyParam}:wght@${weight}`);
   url.searchParams.append('text', text);
