@@ -42,6 +42,7 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - `shadow` - The text shadow of the text. Default is `false`.
 - `size` - The size of the avatar. Default is `64`.
 - `uppercase` - The text transform of the text. Default is `true`.
+- `preset` - The preset of the avatar. Default is `default`.
 
 ## Detailed Parameters Usage
 
@@ -187,6 +188,13 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 - **Default**: `true`
 - **Example**: `uppercase=false`
 - **Values**: `true`, `false`
+
+### preset
+
+- **Description**: The preset of the avatar.
+- **Default**: `default`
+- **Example**: `preset=google`
+- **Values**: `default`, `google`
 
 </details>
 
