@@ -1,6 +1,6 @@
-import type { Context } from "hono";
-import { DEFAULTS } from ".";
-import type { Options } from ".";
+import type { Context } from 'hono';
+import { DEFAULTS } from '.';
+import type { Options } from '.';
 
 // Precompiled regular expressions
 const hexRegex = /^[0-9A-Fa-f]+$/;
@@ -13,7 +13,7 @@ function isHex(text: string): boolean {
 
 // Helper function to remove emojis from text
 function removeEmojis(text: string): string {
-  return text.replace(emojiRegex, "");
+  return text.replace(emojiRegex, '');
 }
 
 // Helper function to transform the name based on specified rules
@@ -23,8 +23,8 @@ function transformName(
   uppercase: boolean,
   reverse: boolean,
 ): string {
-  if (name.includes("+")) {
-    const parts = name.split("+");
+  if (name.includes('+')) {
+    const parts = name.split('+');
     const newLength = length === 1 ? 0 : length - 1;
     const combinedName =
       parts[reverse ? 1 : 0].slice(0, reverse ? newLength : 1) +
@@ -36,14 +36,14 @@ function transformName(
   return uppercase ? truncatedName.toUpperCase() : truncatedName;
 }
 
-type PresetOptions = "google" | "default";
+type PresetOptions = 'google' | 'default';
 
 // Define preset styles
 const PRESETS: Record<PresetOptions, Partial<Options>> = {
   google: {
-    background: "455964",
-    color: "FFFFFF",
-    fontFamily: "sans",
+    background: '455964',
+    color: 'FFFFFF',
+    fontFamily: 'sans',
     fontSize: 0.525,
     bold: false,
     rounded: true,
@@ -59,46 +59,46 @@ export default function getValidatedOptions(c: Context): Options {
   const preset =
     (query.preset as PresetOptions) in PRESETS
       ? (query.preset as PresetOptions)
-      : "default";
+      : 'default';
 
   const background =
     query.background || PRESETS[preset].background || DEFAULTS.BACKGROUND;
   const blur = Number.parseFloat(query.blur) || DEFAULTS.BLUR;
-  const bold = query.bold === "true" || PRESETS[preset].bold || false;
+  const bold = query.bold === 'true' || PRESETS[preset].bold || false;
 
   // Border options
   const border = query.border || null;
-  const borderStyle = query["border-style"] || "solid";
+  const borderStyle = query['border-style'] || 'solid';
   const borderWidth =
-    Number.parseFloat(query["border-width"]) || DEFAULTS.BORDER_WIDTH;
+    Number.parseFloat(query['border-width']) || DEFAULTS.BORDER_WIDTH;
 
   // Font options
   const color = query.color || PRESETS[preset].color || DEFAULTS.COLOR;
   const fontSize =
-    Number.parseFloat(query["font-size"]) ||
+    Number.parseFloat(query['font-size']) ||
     PRESETS[preset].fontSize ||
     DEFAULTS.FONT_SIZE;
   const fontFamily =
-    query["font-family"] || PRESETS[preset].fontFamily || DEFAULTS.FONT_FAMILY;
+    query['font-family'] || PRESETS[preset].fontFamily || DEFAULTS.FONT_FAMILY;
 
   const format = query.format || DEFAULTS.FORMAT;
   const length = query.length || DEFAULTS.LENGTH;
   const name = query.name || DEFAULTS.NAME;
-  const oblique = query.oblique === "true";
+  const oblique = query.oblique === 'true';
   const opacity = Number.parseFloat(query.opacity) || 1;
-  const reverse = query.reverse === "true";
+  const reverse = query.reverse === 'true';
   const rotate = Number.parseFloat(query.rotate) || 0;
-  const rounded = query.rounded === "true" || PRESETS[preset].rounded || false;
-  const shadow = query.shadow === "true"; // Text shadow
+  const rounded = query.rounded === 'true' || PRESETS[preset].rounded || false;
+  const shadow = query.shadow === 'true'; // Text shadow
   const size = Number.parseFloat(query.size) || DEFAULTS.SIZE;
-  const uppercase = query.uppercase !== "false";
+  const uppercase = query.uppercase !== 'false';
 
-  const spaceDeleteName = removeEmojis(name.replace(/ /g, "+"));
+  const spaceDeleteName = removeEmojis(name.replace(/ /g, '+'));
   const newBackground = isHex(background)
     ? `#${background}`
     : `#${DEFAULTS.BACKGROUND}`;
   let newLength =
-    length === "full"
+    length === 'full'
       ? spaceDeleteName.length
       : Number.parseFloat(length.toString());
   newLength = Math.round(newLength);
@@ -153,7 +153,7 @@ export async function generateKeyFromJSON(
   const data = encoder.encode(jsonString);
 
   // Generate a SHA-256 hash using the Web Crypto API
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
 
   // Convert the hash value to a Base64 string
   const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -163,7 +163,7 @@ export async function generateKeyFromJSON(
 }
 
 export function uint8ArrayToBase64(uint8Array: Uint8Array) {
-  let binary = "";
+  let binary = '';
   const len = uint8Array.byteLength;
   for (let i = 0; i < len; i++) {
     binary += String.fromCharCode(uint8Array[i]);

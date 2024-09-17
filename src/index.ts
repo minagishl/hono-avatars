@@ -1,17 +1,17 @@
-import { initWasm } from "@resvg/resvg-wasm";
-import { Hono } from "hono";
-import getValidatedOptions from "./helper";
-import generateImage from "./image";
+import { initWasm } from '@resvg/resvg-wasm';
+import { Hono } from 'hono';
+import getValidatedOptions from './helper';
+import generateImage from './image';
 
 // Cache-related imports
 import {
   base64ToUint8Array,
   generateKeyFromJSON,
   uint8ArrayToBase64,
-} from "./helper";
+} from './helper';
 
 // @ts-ignore
-import WASM_RESVG from "@resvg/resvg-wasm/index_bg.wasm";
+import WASM_RESVG from '@resvg/resvg-wasm/index_bg.wasm';
 
 await initWasm(WASM_RESVG);
 
@@ -22,14 +22,14 @@ type Bindings = {
 
 // Define constants for default values
 export const DEFAULTS = {
-  BACKGROUND: "DDDDDD",
+  BACKGROUND: 'DDDDDD',
   BLUR: 0,
   BOLD: false,
   BORDER_WIDTH: 0.5,
-  COLOR: "222222",
-  FONT_FAMILY: "sans",
+  COLOR: '222222',
+  FONT_FAMILY: 'sans',
   FONT_SIZE: 0.5,
-  FORMAT: "png",
+  FORMAT: 'png',
   LENGTH: 2,
   MAX_BLUR: 1,
   MAX_BORDER_WIDTH: 1,
@@ -41,7 +41,7 @@ export const DEFAULTS = {
   MIN_FONT_SIZE: 0.1,
   MIN_ROTATE: -360,
   MIN_SIZE: 16,
-  NAME: "John+Doe",
+  NAME: 'John+Doe',
   NAME_LENGTH: 40,
   ROTATE: 0,
   SIZE: 64,
@@ -79,17 +79,17 @@ function includeJA(text: string): boolean {
   );
 }
 
-app.get("/", async (c) => {
+app.get('/', async (c) => {
   const options = getValidatedOptions(c);
 
-  if (options.fontFamily === "mono" && includeJA(options.name)) {
+  if (options.fontFamily === 'mono' && includeJA(options.name)) {
     c.status(400);
-    return c.json({ error: "Japanese characters are not supported with mono" });
+    return c.json({ error: 'Japanese characters are not supported with mono' });
   }
 
   if (options.name.length > DEFAULTS.NAME_LENGTH) {
     c.status(400);
-    return c.json({ error: "Name is too long" });
+    return c.json({ error: 'Name is too long' });
   }
 
   // Generate cache key
@@ -97,36 +97,36 @@ app.get("/", async (c) => {
 
   let image: Uint8Array | string | null;
 
-  if (c.env.CACHE_ENABLED === "true") {
-    if (options.format === "svg") {
-      image = await c.env.KV.get(key, "text");
-      c.header("Content-Type", "image/svg+xml");
+  if (c.env.CACHE_ENABLED === 'true') {
+    if (options.format === 'svg') {
+      image = await c.env.KV.get(key, 'text');
+      c.header('Content-Type', 'image/svg+xml');
     } else {
-      image = await c.env.KV.get(key, "text");
-      c.header("Content-Type", "image/png");
+      image = await c.env.KV.get(key, 'text');
+      c.header('Content-Type', 'image/png');
     }
 
     if (image) {
-      c.header("Cache-Control", "public, max-age=86400");
-      c.header("Cache", "HIT");
+      c.header('Cache-Control', 'public, max-age=86400');
+      c.header('Cache', 'HIT');
       return c.body(
-        options.format === "svg" ? image : base64ToUint8Array(image),
+        options.format === 'svg' ? image : base64ToUint8Array(image),
       );
     }
 
-    c.header("Cache", "MISS");
+    c.header('Cache', 'MISS');
   } else {
     c.header(
-      "Content-Type",
-      options.format === "svg" ? "image/svg+xml" : "image/png",
+      'Content-Type',
+      options.format === 'svg' ? 'image/svg+xml' : 'image/png',
     );
-    c.header("Cache-Control", "public, max-age=86400");
+    c.header('Cache-Control', 'public, max-age=86400');
   }
 
   image = await generateImage(options);
 
-  if (c.env.CACHE_ENABLED === "true") {
-    if (options.format === "svg") {
+  if (c.env.CACHE_ENABLED === 'true') {
+    if (options.format === 'svg') {
       await c.env.KV.put(key, image as string, {
         expirationTtl: 60 * 60 * 24,
       });
@@ -136,7 +136,7 @@ app.get("/", async (c) => {
       });
     }
   } else {
-    c.header("Cahe", "DISABLED");
+    c.header('Cahe', 'DISABLED');
   }
 
   return c.body(image);

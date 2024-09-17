@@ -4,10 +4,6 @@ dist/
 # dev
 .yarn/
 !.yarn/releases
-.vscode/*
-!.vscode/launch.json
-!.vscode/*.code-snippets
-!.vscode/extensions.json
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf

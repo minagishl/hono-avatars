@@ -7,7 +7,7 @@
     "dev": "wrangler dev",
     "check": "biome check ./src",
     "check:write": "biome check --write ./src",
-    "format": "biome format .",
+    "format": "biome format ./src",
     "format:write": "biome format --write ./src",
     "lint": "biome lint ./src"
   },
