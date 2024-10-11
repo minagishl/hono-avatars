@@ -13,14 +13,14 @@
   },
   "dependencies": {
     "@resvg/resvg-wasm": "2.4.1",
-    "hono": "^4.5.3",
-    "satori": "^0.10.14"
+    "hono": "^4.6.4",
+    "satori": "^0.11.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.0",
-    "@cloudflare/workers-types": "^4.20240729.0",
-    "esbuild": "^0.23.0",
+    "@biomejs/biome": "1.9.3",
+    "@cloudflare/workers-types": "^4.20241004.0",
+    "esbuild": "^0.24.0",
     "esbuild-plugin-wasm": "^1.1.0",
-    "wrangler": "^3.68.0"
+    "wrangler": "^3.80.4"
   }
 }
