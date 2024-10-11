@@ -171,7 +171,7 @@ export function uint8ArrayToBase64(uint8Array: Uint8Array) {
   return btoa(binary);
 }
 
-export function base64ToUint8Array(base64: string) {
+export function base64ToUint8Array(base64: string): Uint8Array {
   const binary = atob(base64);
   const len = binary.length;
   const uint8Array = new Uint8Array(len);

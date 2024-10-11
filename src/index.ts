@@ -110,7 +110,9 @@ app.get('/', async (c) => {
       c.header('Cache-Control', 'public, max-age=86400');
       c.header('Cache', 'HIT');
       return c.body(
-        options.format === 'svg' ? image : base64ToUint8Array(image),
+        options.format === 'svg'
+          ? image
+          : (base64ToUint8Array(image) as unknown as string),
       );
     }
 
@@ -139,7 +141,7 @@ app.get('/', async (c) => {
     c.header('Cahe', 'DISABLED');
   }
 
-  return c.body(image);
+  return c.body(image as string);
 });
 
 export default app;
