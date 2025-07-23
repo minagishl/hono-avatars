@@ -198,6 +198,40 @@ https://hono-avatars.pages.dev/?background=0D8ABC&color=fff
 
 </details>
 
+## API Documentation
+
+This project provides OpenAPI documentation and interactive API testing through Swagger UI.
+
+### Endpoints
+
+- **`/`** - Avatar generation endpoint (main API)
+- **`/docs`** - Interactive Swagger UI documentation
+- **`/openapi.json`** - OpenAPI specification in JSON format
+
+### Accessing the Documentation
+
+Once the server is running, you can access the interactive API documentation at:
+
+```
+http://localhost:8787/docs
+```
+
+The Swagger UI provides:
+- Complete API documentation with parameter descriptions
+- Interactive testing interface - try the API directly from the browser
+- Request/response examples
+- Parameter validation and type information
+
+### OpenAPI Specification
+
+The OpenAPI specification is available at:
+
+```
+http://localhost:8787/openapi.json
+```
+
+This JSON file contains the complete API schema and can be used with various OpenAPI tools and clients.
+
 ## License
 
 `hono-avatars` project is licensed under the [MIT License](LICENSE).
