@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hono-avatars",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-07-25",
+  // Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
+  // Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "55849a9953ca4a75861fb5b5fbb81ff6"
+    }
+  ],
+  "vars": {
+    "CACHE_ENABLED": true
+  }
+}
