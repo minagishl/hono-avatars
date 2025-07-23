@@ -1,5 +1,6 @@
+import { swaggerUI } from '@hono/swagger-ui';
+import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
 import { initWasm } from '@resvg/resvg-wasm';
-import { Hono } from 'hono';
 import getValidatedOptions from './helper';
 import generateImage from './image';
 
@@ -70,7 +71,124 @@ export type Options = {
   uppercase: boolean;
 };
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
+
+// OpenAPI schema definitions
+const QuerySchema = z.object({
+  name: z.string().max(40).optional().default('John+Doe').openapi({
+    example: 'John+Doe',
+    description:
+      'Name to display in the avatar. Use + to separate first and last name',
+  }),
+  size: z.coerce.number().min(16).max(512).optional().default(64).openapi({
+    example: 64,
+    description: 'Size of the avatar in pixels',
+  }),
+  background: z.string().optional().default('DDDDDD').openapi({
+    example: 'DDDDDD',
+    description: 'Background color in hex format (without #)',
+  }),
+  color: z.string().optional().default('222222').openapi({
+    example: '222222',
+    description: 'Text color in hex format (without #)',
+  }),
+  'font-size': z.coerce
+    .number()
+    .min(0.1)
+    .max(1)
+    .optional()
+    .default(0.5)
+    .openapi({
+      example: 0.5,
+      description: 'Font size as a ratio (0.1 to 1.0)',
+    }),
+  'font-family': z.enum(['sans', 'mono']).optional().default('sans').openapi({
+    example: 'sans',
+    description: 'Font family to use',
+  }),
+  bold: z.enum(['true', 'false']).optional().default('false').openapi({
+    example: 'false',
+    description: 'Whether to use bold font',
+  }),
+  length: z
+    .union([z.coerce.number(), z.literal('full')])
+    .optional()
+    .default(2)
+    .openapi({
+      example: 2,
+      description:
+        'Number of characters to display or "full" for all characters',
+    }),
+  format: z.enum(['png', 'svg']).optional().default('png').openapi({
+    example: 'png',
+    description: 'Output format',
+  }),
+  rounded: z.enum(['true', 'false']).optional().default('false').openapi({
+    example: 'false',
+    description: 'Whether to make the avatar rounded',
+  }),
+  uppercase: z.enum(['true', 'false']).optional().default('true').openapi({
+    example: 'true',
+    description: 'Whether to convert text to uppercase',
+  }),
+  reverse: z.enum(['true', 'false']).optional().default('false').openapi({
+    example: 'false',
+    description: 'Whether to reverse the name order',
+  }),
+  rotate: z.coerce.number().min(-360).max(360).optional().default(0).openapi({
+    example: 0,
+    description: 'Rotation angle in degrees',
+  }),
+  blur: z.coerce.number().min(0).max(1).optional().default(0).openapi({
+    example: 0,
+    description: 'Blur amount (0 to 1)',
+  }),
+  opacity: z.coerce.number().min(0).max(1).optional().default(1).openapi({
+    example: 1,
+    description: 'Opacity (0 to 1)',
+  }),
+  oblique: z.enum(['true', 'false']).optional().default('false').openapi({
+    example: 'false',
+    description: 'Whether to use oblique/italic font',
+  }),
+  shadow: z.enum(['true', 'false']).optional().default('false').openapi({
+    example: 'false',
+    description: 'Whether to add text shadow',
+  }),
+  border: z.string().optional().openapi({
+    example: '000000',
+    description: 'Border color in hex format (without #)',
+  }),
+  'border-width': z.coerce
+    .number()
+    .min(0.1)
+    .max(1)
+    .optional()
+    .default(0.5)
+    .openapi({
+      example: 0.5,
+      description: 'Border width as a ratio (0.1 to 1.0)',
+    }),
+  'border-style': z
+    .enum(['solid', 'dashed', 'dotted'])
+    .optional()
+    .default('solid')
+    .openapi({
+      example: 'solid',
+      description: 'Border style',
+    }),
+  preset: z.enum(['default', 'google']).optional().default('default').openapi({
+    example: 'default',
+    description: 'Preset style configuration',
+  }),
+});
+
+const ErrorResponseSchema = z.object({
+  error: z.string().openapi({
+    example: 'Name is too long',
+    description: 'Error message',
+  }),
+});
 
 // Helper function to check if text includes Japanese characters
 function includeJA(text: string): boolean {
@@ -79,17 +197,54 @@ function includeJA(text: string): boolean {
   );
 }
 
-app.get('/', async (c) => {
+// Define the avatar generation route
+const avatarRoute = createRoute({
+  method: 'get',
+  path: '/',
+  request: {
+    query: QuerySchema,
+  },
+  responses: {
+    200: {
+      description: 'Generated avatar image',
+      content: {
+        'image/png': {
+          schema: z.string().openapi({
+            format: 'binary',
+            description: 'PNG image binary data',
+          }),
+        },
+        'image/svg+xml': {
+          schema: z.string().openapi({
+            description: 'SVG image as text',
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Bad request',
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+    },
+  },
+  tags: ['Avatar Generation'],
+});
+
+app.openapi(avatarRoute, async (c) => {
   const options = getValidatedOptions(c);
 
   if (options.fontFamily === 'mono' && includeJA(options.name)) {
-    c.status(400);
-    return c.json({ error: 'Japanese characters are not supported with mono' });
+    return c.json(
+      { error: 'Japanese characters are not supported with mono' },
+      400,
+    );
   }
 
   if (options.name.length > DEFAULTS.NAME_LENGTH) {
-    c.status(400);
-    return c.json({ error: 'Name is too long' });
+    return c.json({ error: 'Name is too long' }, 400);
   }
 
   // Generate cache key
@@ -143,5 +298,18 @@ app.get('/', async (c) => {
 
   return c.body(image as string);
 });
+
+// Add OpenAPI documentation endpoint
+app.doc('/openapi.json', {
+  openapi: '3.0.0',
+  info: {
+    title: 'Hono Avatars API',
+    version: '1.0.0',
+    description: 'Generate custom avatar images with various styling options',
+  },
+});
+
+// Add Swagger UI endpoint
+app.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
 export default app;

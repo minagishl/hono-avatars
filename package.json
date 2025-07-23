@@ -12,9 +12,12 @@
     "lint": "biome lint ./src"
   },
   "dependencies": {
+    "@hono/swagger-ui": "^0.5.2",
+    "@hono/zod-openapi": "^1.0.2",
     "@resvg/resvg-wasm": "2.4.1",
     "hono": "^4.6.4",
-    "satori": "^0.11.2"
+    "satori": "^0.11.2",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.3",
